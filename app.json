@@ -22,11 +22,6 @@
     "plugins": [
       "expo-dev-client",
       "expo-notifications"
-    ],
-    "extra": {
-      "eas": {
-        "projectId": "replace-after-eas-build-configure"
-      }
-    }
+    ]
   }
 }
