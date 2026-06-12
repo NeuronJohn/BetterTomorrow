@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "Daily Companion",
+    "slug": "daily-companion",
+    "version": "0.3.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "scheme": "dailycompanion",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "android": {
+      "package": "com.nathangeraci.dailycompanion",
+      "permissions": [
+        "POST_NOTIFICATIONS",
+        "SCHEDULE_EXACT_ALARM"
+      ],
+      "adaptiveIcon": {
+        "backgroundColor": "#0B1119"
+      }
+    },
+    "plugins": [
+      "expo-dev-client",
+      "expo-notifications"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "replace-after-eas-build-configure"
+      }
+    }
+  }
+}
