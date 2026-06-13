@@ -94,3 +94,9 @@ This version only changes:
 - Brief/Updates/Build action button sizing.
 
 It does not modify Plan or Memory screen files.
+
+
+## v1.19 note
+
+This patch keeps Plan unchanged. Memory is only touched to restore the Remembered preferences horizontal scroller.
+The thumbnail fix is now layout-based: the right-side thumbnail has a fixed width so it cannot expand into a giant image on S24/Pixel.

@@ -115,3 +115,11 @@
 - Updates now uses the same compact side-by-side thumbnail structure as Brief.
 - Brief thumbnail/text split was tightened so the image cannot dominate the card.
 - Action buttons were tuned down into compact pills so labels do not get smushed.
+
+
+# v1.19 S24/Pixel targeted fix
+
+- Restored Remembered preferences to horizontal sideways scroll cards.
+- Fixed Updates thumbnail layout by hard-capping thumbnail width; it can no longer become a giant card image.
+- Fixed Brief thumbnail layout with a fixed thumbnail width so it cannot dominate the card.
+- Added inner horizontal padding to Updates/Brief/Build action button rows so buttons do not sit on card edges.

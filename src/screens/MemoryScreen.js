@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import AssetIcon from '../components/AssetIcon';
 import AppShell from '../components/AppShell';
 import { getThumbSource, Panel } from '../components/Cards';
@@ -40,11 +40,11 @@ export default function MemoryScreen({ activeTab = 'Memory', onNavigate, pack })
       </Panel>
 
       <SectionHeader title="Remembered preferences" action="Manage" />
-      <View style={styles.prefGrid}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.prefGrid}>
         {(pack.memory?.preferences || []).map((pref) => (
           <PrefCard key={pref.text} icon={pref.icon} text={pref.text} color={prefColors[pref.color] || colors.teal} />
         ))}
-      </View>
+      </ScrollView>
 
       <SectionHeader title="Remembered notes" action="See all" />
       <Panel style={styles.noteCard}>
@@ -117,8 +117,8 @@ const styles = StyleSheet.create({
   metaText: { color: colors.muted, fontSize: 15, fontWeight: '800' },
   savedStatus: { color: colors.teal, fontSize: 16, fontWeight: '900', marginLeft: 'auto' },
 
-  prefGrid: { flexDirection: 'row', gap: 10, marginBottom: 18 },
-  prefCard: { flex: 1, minHeight: 128, padding: 12 },
+  prefGrid: { gap: 12, paddingRight: 20, marginBottom: 18 },
+  prefCard: { width: 215, minHeight: 124, padding: 14, marginRight: 0 },
   prefContent: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   prefIcon: {
     width: 42,
@@ -132,8 +132,8 @@ const styles = StyleSheet.create({
   },
   prefText: {
     color: colors.muted,
-    fontSize: 13.5,
-    lineHeight: 19,
+    fontSize: 14.5,
+    lineHeight: 20,
     fontWeight: '700',
     flex: 1,
     minWidth: 0,

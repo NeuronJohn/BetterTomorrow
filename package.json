@@ -1,6 +1,6 @@
 {
   "name": "daily-companion-component-ui",
-  "version": "1.18.0-s24-pixel-fix",
+  "version": "1.19.0-s24-pixel-fix",
   "private": true,
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
