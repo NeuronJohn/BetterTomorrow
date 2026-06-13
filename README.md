@@ -1,276 +1,225 @@
-# Daily Companion Component UI v1.1
+# Daily Companion
 
-This is a real component-based UI package with data-driven daily content.
+Daily Companion is a React Native / Expo Android app that turns an imported daily JSON file into a personalized productivity dashboard. The app combines a daily brief, task plan, updates feed, saved memory, card actions, and active project progress tracking.
 
-## What changed
+The project was built to demonstrate practical mobile app development, reusable UI components, data-driven rendering, local persistence, and real-device UX iteration.
 
-- Replaced weak text symbols with generated PNG icon assets.
-- Kept generated artwork only for small UI assets and 16:9 thumbnails.
-- Added an **Import daily pack** button to the Brief tab.
-- Added a JSON daily-pack system that controls:
-  - Brief greeting/direction
-  - Featured video/update
-  - Plan tasks
-  - Updates tab cards
-  - Memory saved items/preferences/notes
-  - Morning/evening notification copy
-- The app stores imported JSON with AsyncStorage.
-- No fake time/battery text is rendered; the app leaves top safe-area space for the phone OS.
-- No new native dependencies.
+## Features
 
-## Daily pack import
+* Import daily content from a JSON pack
+* Render dynamic Brief, Plan, Updates, Memory, and Progress screens
+* Display video, project, reminder, and saved-item cards from structured data
+* Support remote thumbnails and imported image URLs
+* Save cards to Memory
+* Remove saved cards with confirmation
+* Open external links from cards
+* Tune/hide cards through a feedback overlay
+* Track active project progress with checkable tasks
+* Add local project progress updates
+* Persist imported content, saved items, tune notes, and progress locally
 
-Use the button on Brief: **Import daily pack**.
+## Screens
 
-A template is included:
+### Brief
 
-```text
-daily_pack_template.json
-```
+Daily overview with a greeting, direction cards, featured content, and active project entry point.
 
-Paste that JSON into the import modal, edit it, or ask ChatGPT for a new daily pack.
+### Plan
 
-## Thumbnail support
+Simple daily task list with a main target, supporting tasks, and time estimates.
 
-The current build supports local thumbnail keys:
+### Updates
+
+Scrollable feed of useful content, including videos, reminders, small project cards, and active project cards.
+
+### Memory
+
+Saved items, remembered preferences, notes, and memory-management sheets.
+
+### Progress
+
+Dedicated active-project screen with task checkoffs, progress percentage, next step, and update logging.
+
+## Technical Highlights
+
+### Data-Driven UI
+
+Most screen content is rendered from an imported JSON pack rather than hardcoded into the app. This allows the same UI system to support different users, goals, projects, cards, images, and progress tasks.
+
+### Reusable Card System
+
+The app uses reusable card components for:
+
+* Featured video cards
+* Compact update cards
+* Active project cards
+* Saved memory cards
+* Notes
+* Preferences
+* Project options
+
+Cards support consistent actions such as save, hide/tune, open, view progress, and see details.
+
+### Local Persistence
+
+The app stores user state locally using AsyncStorage, including:
+
+* Current imported daily pack
+* Saved items
+* Tune notes
+* Checked project tasks
+* Progress updates
+
+This allows progress and saved context to remain available between sessions.
+
+### Progress Tracking
+
+Active project cards can open an in-app Progress screen. Project tasks are defined in the imported JSON pack using stable task IDs, allowing task completion to persist across minor content updates.
+
+### Mobile UX Iteration
+
+The UI was refined through real Android device testing. Updates focused on spacing, touch targets, card layout, thumbnail sizing, saved states, bottom navigation, and overlay behavior.
+
+## Import Pack Structure
+
+A daily pack can define the app’s content and behavior for the day.
+
+Example:
 
 ```json
-"thumbnailKey": "ticketTracker"
-```
-
-or remote thumbnails:
-
-```json
-"thumbnailUrl": "https://example.com/thumbnail.jpg"
-```
-
-Remote URLs use React Native's built-in Image support.
-
-## Build safety
-
-This update uses only React Native components and bundled assets:
-
-- `View`
-- `Text`
-- `Image`
-- `Pressable`
-- `ScrollView`
-- `Modal`
-- `TextInput`
-- `AsyncStorage` already present in the project
-
-
-## Morning / evening notifications
-
-Daily pack JSON includes:
-
-```json
-"notifications": {
-  "morning": { "enabled": true, "time": "08:15", "title": "Daily Companion", "body": "Your brief is ready." },
-  "evening": { "enabled": true, "time": "20:45", "title": "Quick check-in", "body": "Drop one sentence so tomorrow can adjust." }
+{
+  "version": 4,
+  "date": "2026-06-13",
+  "brief": {},
+  "featured": {},
+  "buildStatus": {},
+  "plan": {},
+  "updates": [],
+  "memory": {}
 }
 ```
 
-When a daily pack is imported, the app requests notification permission and schedules the morning/evening reminders from that JSON.
+### Active Project Example
+
+```json
+{
+  "id": "sellready-proof-pack",
+  "type": "activeProject",
+  "label": "ACTIVE PROJECT",
+  "title": "SellReady proof pack",
+  "description": "Sharpen the offer, build one proof asset, and leave with something useful.",
+  "progressUrl": "https://example.com/project",
+  "detailsUrl": "https://example.com/details",
+  "progress": {
+    "summary": "Why this project matters right now.",
+    "currentStep": "The next best step.",
+    "tasks": [
+      {
+        "id": "stable-task-id",
+        "title": "Task title",
+        "copy": "Task description.",
+        "time": "10 min",
+        "category": "Proof"
+      }
+    ]
+  }
+}
+```
 
+## Project Structure
 
-## v1.17 S24/Pixel targeted fix
+```text
+src/
+  components/
+    AppShell.js
+    AssetIcon.js
+    BottomNav.js
+    Buttons.js
+    Cards.js
+    ImportDailyPackModal.js
 
-This version intentionally does **not** modify:
-- `src/screens/MemoryScreen.js`
-- `src/screens/PlanScreen.js`
+  data/
+    assets.js
+    defaultDailyPack.js
 
-The update is only for:
-- Brief import button placement,
-- Brief/Updates thumbnail fit,
-- Brief/Updates/Build action button sizing.
+  hooks/
+    useDailyPack.js
 
+  screens/
+    BriefScreen.js
+    MemoryScreen.js
+    PlanScreen.js
+    ProgressScreen.js
+    UpdatesScreen.js
 
-## v1.18 targeted note
+  services/
+    notifications.js
 
-This version only changes:
-- Updates card thumbnail layout,
-- Brief card thumbnail sizing,
-- Brief/Updates/Build action button sizing.
+  theme/
+    tokens.js
+```
 
-It does not modify Plan or Memory screen files.
+## Setup
 
+Install dependencies:
 
-## v1.19 note
+```bash
+npm install
+```
 
-This patch keeps Plan unchanged. Memory is only touched to restore the Remembered preferences horizontal scroller.
-The thumbnail fix is now layout-based: the right-side thumbnail has a fixed width so it cannot expand into a giant image on S24/Pixel.
+Start the development client:
 
+```bash
+npm run start
+```
 
-## v1.20 device-fit note
+Run on Android:
 
-The thumbnail issue is fixed at the layout level:
-- Brief/Updates video thumbnails use a fixed 156x88 frame.
-- The image can no longer decide the card height.
-- Action buttons have dedicated padding inside the card.
+```bash
+npm run android
+```
 
-Remembered preferences are back to horizontal scroll.
+Build Android development version:
 
+```bash
+npm run build:android:dev
+```
 
-## v1.21 reference-match pass
+## Recent Updates
 
-This pass dissects the difference between the desired phone screenshots and the broken phone render:
-- Broken: thumbnail either becomes a giant hero image or gets hard-locked too small.
-- Fixed: thumbnail width is responsive and bounded using device width.
-- Broken: import button was fixed absolute and appeared over cards while scrolling.
-- Fixed: import button is now part of the Brief header and scrolls naturally.
-- Broken: preferences either squeezed or oversized.
-- Fixed: preferences are a horizontal scroller again.
+### Progress Screen
 
+Added an in-app progress screen for active projects. Users can check off tasks, view completion percentage, add progress notes, and open related project links.
 
-## v1.22 card width pass
+### Memory Actions
 
-This pass only widens the main page cards by reducing the global screen horizontal padding.
+Added saved-item management, memory sheets, remembered notes, and preference-management UI.
 
+### Card Actions
 
-## v1.23 reference layout correction
+Improved card behavior for save, unsave, hide/tune, open item, view progress, and project options.
 
-This version reverts the bad hard-lock thumbnail approach:
-- Updates uses a large top thumbnail again, matching the reference, but with shorter aspect ratio.
-- Brief uses a large side thumbnail again, matching the reference, but bounded to phone width.
-- Import pack is part of the header layout instead of an absolute overlay.
+### Daily Pack Import
 
+Expanded the import format to support richer cards, remote images, saved items, memory notes, tune notes, and project progress tasks.
 
-## v1.24 non-plan density pass
+### Mobile UI Polish
 
-Plan is intentionally preserved. This pass targets the screens that looked too large on the phone:
-- Brief morning card now has proper internal padding/flex layout.
-- Memory card layout matches the compact reference more closely.
-- Brief/Updates feature cards are slightly denser while preserving the v1.23 reference direction.
+Improved card spacing, thumbnail layouts, button padding, saved states, overlays, and Android phone fit.
 
+## Skills Demonstrated
 
-## v1.25 thumbnail-card-only pass
+* React Native mobile development
+* Expo development workflow
+* Component-based UI architecture
+* Data-driven rendering from JSON
+* Local persistence with AsyncStorage
+* Mobile UI/UX iteration
+* Interactive card systems
+* Progress tracking workflows
+* State management across screens
+* Real-device debugging and layout refinement
 
-This update is intentionally limited to `src/components/Cards.js`.
+## Summary
 
-It fixes only the cards with thumbnails:
-- Brief feature card
-- Updates feature card
-- Build status card
-- Tune preview thumbnail card keeps compatible sizing
-
-Unchanged:
-- Plan screen
-- Memory screen
-- App shell/header/nav
-- Bottom nav
-- Button component styling
-
-
-## v1.26 thumbnail card system
-
-This pass fixes thumbnail cards by making them data-driven instead of guessing layout from one placeholder image.
-
-Use these fields in the daily pack:
-- `thumbnailUrl`: actual remote thumbnail URL, e.g. a YouTube video thumbnail.
-- `thumbnailSize`: `"main"` or `"small"`.
-- `briefThumbnailSize`: optional override for Brief.
-- `memoryThumbnailSize`: optional override for Memory saved items.
-- `thumbnailAspectRatio`: optional, default 1.777.
-- `thumbnailResizeMode`: `"cover"` by default, `"contain"` when needed.
-
-See `THUMBNAIL_CARD_DATA.md`.
-
-
-## v1.27 tab-aware card styles
-
-Cards with thumbnails now have tab-aware styles:
-- Updates focus card: `cardStyle: "main"`
-- Brief card: `briefCardStyle: "compact"`
-- Memory saved card: `memoryCardStyle: "saved"`
-- Secondary update cards: `cardStyle: "compact"`
-
-Use actual video thumbnails via `thumbnailUrl`. See `THUMBNAIL_CARD_DATA.md`.
-
-
-## v1.28 thumbnail card fit pass
-
-This pass focuses only on cards with thumbnails:
-- Updates main card
-- Brief compact card
-- Build status card
-- Memory saved card
-
-It keeps the app-wide nav/header/button system intact and makes the card compositions denser, with bigger thumbnails and less dead space.
-
-
-## v1.29 visible thumbnail composition reset
-
-This pass makes the thumbnail-card change visually obvious:
-- Main cards no longer use the old lower two-column metadata layout.
-- Buttons are only locally tightened inside thumbnail cards.
-- Compact cards and saved cards use larger thumbnails with less dead space.
-
-
-## v1.30 functional cards
-
-This build includes a real preloaded daily pack and working card actions.
-
-Included pack files:
-- `daily_pack_today.json`
-- `daily_pack_2026-06-13.json`
-
-The featured task uses a real YouTube video and actual YouTube thumbnail URL for `Expo in 100 Seconds`. Save, Hide, Open item, View progress, See details, and Memory unsave now work from the preloaded/imported daily pack data.
-
-Requested color tweak: the Brief tab build-status buttons `View progress` and `See details` use the same teal as the Open item button for text/icons only.
-
-
-## v1.31 saved confirmation polish
-
-Saved state is now clearer:
-- Saved = green text + green bookmark icon.
-- Save = muted text + muted bookmark icon.
-- Pressing Saved or a Memory bookmark opens a confirmation overlay before unsaving.
-- Time chips include the clock icon inside the chip.
-
-
-## v1.32 Hide opens Tune overlay
-
-Hide now opens the Tune overlay instead of immediately hiding. The actual hide happens from the Tune overlay options like "Too much" or "Not useful."
-
-
-## v1.33 Tune overlay + memory backend
-
-Hide opens a real modal Tune overlay now. Swipe down from the handle to close it, or tap outside.
-
-Tune decisions are stored in backend-only memory state:
-- `memory.tuneNotes`
-- persisted locally with AsyncStorage
-
-Unsaving only removes the saved Memory item and flips saved buttons back to Save. It does not hide the card.
-
-
-## v1.34 Action UI + Memory sheets
-
-Interactive polish added:
-- `See all` and `Manage` buttons now open real bottom-sheet UI.
-- Build status `•••` opens active project options.
-- Imported data can replicate the same card look using the schema in `IMPORT_SCHEMA.md`.
-
-
-## v1.35 link fix
-
-The app now opens web links directly with `Linking.openURL` and normalizes missing protocols.
-
-Build progress URL:
-`https://expo.dev/accounts/neuronjohn/projects/daily-companion`
-
-This should fix:
-- Open item not opening YouTube.
-- View progress not opening the Expo project.
-
-
-## v1.36 Progress screen
-
-`View progress` now opens an in-app screen where the user can:
-- check off project tasks,
-- see percent complete,
-- add progress updates,
-- open the external Expo project link from inside the progress screen.
-
-See `PROGRESS_SCHEMA.md` for import format.
+Daily Companion is a working mobile app prototype focused on personalized daily productivity. It demonstrates how imported structured data can drive a mobile dashboard with saved memory, useful content, and active project progress tracking.
