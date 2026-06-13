@@ -206,3 +206,13 @@
 - Shortened card action buttons inside thumbnail cards without changing the global Button component.
 - Main focus thumbnails now clamp to a wider/shorter aspect ratio so old imported 16:9 data does not create a too-tall card.
 - Memory saved card thumbnail is larger and the bookmark is smaller inside the label row.
+
+
+# v1.29 visible thumbnail composition reset
+
+- Main video cards now remove the left metadata column that created dead space.
+- Main cards use thumbnail → compact meta/title/description → buttons, so the card reads as one composition.
+- Compact cards use a bigger right thumbnail and tighter text/buttons.
+- Build status cards use a larger thumbnail and tighter local buttons.
+- Memory saved thumbnail card is denser, with a larger thumbnail and smaller bookmark.
+- No changes to Plan, AppShell, BottomNav, global Buttons, or Brief screen.

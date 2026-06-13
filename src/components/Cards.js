@@ -22,9 +22,7 @@ function resizeMode(item) {
 
 function mainAspectRatio(item) {
   const value = Number(item?.thumbnailAspectRatio);
-  // Main focus cards must stay wide/short enough on real devices.
-  // Imported data can make it wider, but not taller than this.
-  return Math.max(value || 2.05, 1.98);
+  return Math.max(value || 2.05, 1.95);
 }
 
 export function Panel({ children, style }) {
@@ -54,25 +52,23 @@ function PressableThumbFrame({ item, onTune, style }) {
 function ActionRow({ primaryLabel = 'Open item' }) {
   return (
     <View style={styles.actionRow}>
-      <PillButton label="Save" icon="bookmark" style={[styles.cardButton, styles.secondaryAction]} />
-      <PillButton label="Hide" icon="hide" style={[styles.cardButton, styles.secondaryAction]} />
-      <PillButton label={primaryLabel} icon="play" primary style={[styles.cardButton, styles.primaryAction]} />
+      <PillButton label="Save" icon="bookmark" style={[styles.tightButton, styles.secondaryAction]} />
+      <PillButton label="Hide" icon="hide" style={[styles.tightButton, styles.secondaryAction]} />
+      <PillButton label={primaryLabel} icon="play" primary style={[styles.tightButton, styles.primaryAction]} />
     </View>
   );
 }
 
-function MetaStack({ item, duration = true }) {
+function MetaChipRow({ item }) {
   return (
-    <View style={styles.metaStack}>
+    <View style={styles.metaChipRow}>
       <Text allowFontScaling={false} style={styles.label} numberOfLines={1}>
         {item.label || 'UPDATE'}
       </Text>
-      {duration ? (
-        <View style={styles.timeRow}>
-          <AssetIcon name="clock" size={20} color={colors.muted} />
-          <MetaPill label={item.duration || '10 min'} style={styles.timePill} />
-        </View>
-      ) : null}
+      <View style={styles.timeRow}>
+        <AssetIcon name="clock" size={18} color={colors.muted} />
+        <MetaPill label={item.duration || '10 min'} style={styles.timePill} />
+      </View>
     </View>
   );
 }
@@ -82,16 +78,14 @@ function MainFocusCard({ item, onTune }) {
     <Panel style={styles.mainCard}>
       <PressableThumbFrame item={item} onTune={onTune} style={[styles.mainThumb, { aspectRatio: mainAspectRatio(item) }]} />
 
-      <View style={styles.mainContentGrid}>
-        <MetaStack item={item} />
-        <View style={styles.mainCopy}>
-          <Text allowFontScaling={false} style={styles.title} numberOfLines={2}>
-            {item.title}
-          </Text>
-          <Text allowFontScaling={false} style={styles.description} numberOfLines={3}>
-            {item.description}
-          </Text>
-        </View>
+      <View style={styles.mainCopyBlock}>
+        <MetaChipRow item={item} />
+        <Text allowFontScaling={false} style={styles.mainTitle} numberOfLines={2}>
+          {item.title}
+        </Text>
+        <Text allowFontScaling={false} style={styles.mainDescription} numberOfLines={2}>
+          {item.description}
+        </Text>
       </View>
 
       <ActionRow />
@@ -107,14 +101,14 @@ function CompactFocusCard({ item, onTune }) {
           <Text allowFontScaling={false} style={styles.label} numberOfLines={1}>
             {item.label || 'UPDATE'}
           </Text>
-          <Text allowFontScaling={false} style={styles.title} numberOfLines={3}>
+          <Text allowFontScaling={false} style={styles.compactTitle} numberOfLines={3}>
             {item.title}
           </Text>
-          <Text allowFontScaling={false} style={styles.description} numberOfLines={4}>
+          <Text allowFontScaling={false} style={styles.compactDescription} numberOfLines={3}>
             {item.description}
           </Text>
           <View style={styles.timeRow}>
-            <AssetIcon name="clock" size={20} color={colors.muted} />
+            <AssetIcon name="clock" size={18} color={colors.muted} />
             <MetaPill label={item.duration || '10 min'} style={styles.timePill} />
           </View>
         </View>
@@ -163,8 +157,8 @@ export function BuildStatusCard({ item, mode = 'updates' }) {
       </View>
 
       <View style={styles.twoActions}>
-        <PillButton label={brief ? 'View progress' : 'Save'} icon={brief ? 'trend' : 'bookmark'} style={[styles.cardButton, styles.fullAction]} />
-        <PillButton label={brief ? 'See details' : 'Hide'} icon={brief ? 'eye' : 'hide'} style={[styles.cardButton, styles.fullAction]} />
+        <PillButton label={brief ? 'View progress' : 'Save'} icon={brief ? 'trend' : 'bookmark'} style={[styles.tightButton, styles.fullAction]} />
+        <PillButton label={brief ? 'See details' : 'Hide'} icon={brief ? 'eye' : 'hide'} style={[styles.tightButton, styles.fullAction]} />
       </View>
     </Panel>
   );
@@ -202,8 +196,8 @@ export function TuneSheet({ item, visible, onClose }) {
         <View style={styles.reason}><Text allowFontScaling={false} style={styles.reasonText}>Optional reason</Text></View>
 
         <View style={styles.twoActions}>
-          <PillButton label="Cancel" onPress={onClose} style={[styles.cardButton, styles.fullAction]} />
-          <PillButton label="Remember" primary onPress={onClose} style={[styles.cardButton, styles.fullAction]} />
+          <PillButton label="Cancel" onPress={onClose} style={[styles.tightButton, styles.fullAction]} />
+          <PillButton label="Remember" primary onPress={onClose} style={[styles.tightButton, styles.fullAction]} />
         </View>
       </View>
     </View>
@@ -238,22 +232,27 @@ const styles = StyleSheet.create({
     width: '100%',
     borderRadius: 21,
   },
-  mainContentGrid: {
-    flexDirection: 'row',
-    gap: 14,
-    alignItems: 'center',
+  mainCopyBlock: {
     paddingTop: 12,
-    minHeight: 84,
+    gap: 8,
   },
-  mainCopy: {
-    flex: 1,
-    minWidth: 0,
-    justifyContent: 'center',
+  metaChipRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
   },
-  metaStack: {
-    width: 102,
-    minWidth: 0,
-    gap: 10,
+  mainTitle: {
+    color: colors.text,
+    fontSize: 18.5,
+    lineHeight: 23,
+    fontWeight: '900',
+    includeFontPadding: false,
+  },
+  mainDescription: {
+    color: colors.muted,
+    fontSize: 13.7,
+    lineHeight: 19,
+    includeFontPadding: false,
   },
 
   compactCard: {
@@ -263,7 +262,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 13,
-    minHeight: 148,
+    minHeight: 146,
   },
   compactCopy: {
     flex: 1,
@@ -272,10 +271,23 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   compactThumb: {
-    width: '54%',
+    width: '56%',
     aspectRatio: 16 / 9,
     borderRadius: 19,
     flexShrink: 0,
+  },
+  compactTitle: {
+    color: colors.text,
+    fontSize: 17.8,
+    lineHeight: 22.5,
+    fontWeight: '900',
+    includeFontPadding: false,
+  },
+  compactDescription: {
+    color: colors.muted,
+    fontSize: 13.6,
+    lineHeight: 19,
+    includeFontPadding: false,
   },
 
   label: {
@@ -286,19 +298,6 @@ const styles = StyleSheet.create({
     letterSpacing: .35,
     includeFontPadding: false,
   },
-  title: {
-    color: colors.text,
-    fontSize: 17.8,
-    lineHeight: 22.5,
-    fontWeight: '900',
-    includeFontPadding: false,
-  },
-  description: {
-    color: colors.muted,
-    fontSize: 13.6,
-    lineHeight: 19,
-    includeFontPadding: false,
-  },
   timeRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -306,33 +305,33 @@ const styles = StyleSheet.create({
   },
   timePill: {
     alignSelf: 'flex-start',
-    minHeight: 36,
-    paddingVertical: 8,
-    paddingHorizontal: 11,
-    fontSize: 14,
+    minHeight: 34,
+    paddingVertical: 7,
+    paddingHorizontal: 10,
+    fontSize: 13.6,
   },
 
   actionRow: {
-    minHeight: 52,
+    minHeight: 50,
     flexDirection: 'row',
     gap: 10,
-    paddingTop: 13,
+    paddingTop: 12,
     paddingHorizontal: 7,
   },
   twoActions: {
-    minHeight: 52,
+    minHeight: 50,
     flexDirection: 'row',
     gap: 10,
-    paddingTop: 13,
+    paddingTop: 12,
     paddingHorizontal: 7,
   },
-  cardButton: {
-    minHeight: 54,
-    borderRadius: 19,
-    paddingHorizontal: 10,
+  tightButton: {
+    minHeight: 50,
+    borderRadius: 18,
+    paddingHorizontal: 9,
   },
-  secondaryAction: { flex: 1.06, minWidth: 0 },
-  primaryAction: { flex: 2.05, minWidth: 0 },
+  secondaryAction: { flex: 1.04, minWidth: 0 },
+  primaryAction: { flex: 2.08, minWidth: 0 },
   fullAction: { flex: 1, minWidth: 0 },
 
   buildCard: {
@@ -340,12 +339,12 @@ const styles = StyleSheet.create({
   },
   buildTop: {
     flexDirection: 'row',
-    gap: 15,
+    gap: 14,
     alignItems: 'center',
-    minHeight: 110,
+    minHeight: 108,
   },
   buildThumb: {
-    width: '49%',
+    width: '51%',
     aspectRatio: 16 / 9,
     borderRadius: 18,
     flexShrink: 0,
@@ -362,7 +361,7 @@ const styles = StyleSheet.create({
   },
   buildLabel: {
     color: colors.gold,
-    fontSize: 12.5,
+    fontSize: 12.3,
     lineHeight: 15.5,
     fontWeight: '900',
     letterSpacing: .3,
@@ -377,16 +376,16 @@ const styles = StyleSheet.create({
   },
   buildTitle: {
     color: colors.text,
-    fontSize: 17.8,
-    lineHeight: 22.5,
+    fontSize: 17.6,
+    lineHeight: 22,
     fontWeight: '900',
-    marginTop: 8,
+    marginTop: 7,
     includeFontPadding: false,
   },
   buildDescription: {
     color: colors.muted,
-    fontSize: 13.6,
-    lineHeight: 19,
+    fontSize: 13.4,
+    lineHeight: 18.5,
     marginTop: 6,
     includeFontPadding: false,
   },
@@ -407,7 +406,7 @@ const styles = StyleSheet.create({
   sheetTitle: { color: colors.text, fontSize: 34, lineHeight: 40, fontWeight: '900', includeFontPadding: false },
   sheetCopy: { color: colors.muted, fontSize: 15.5, lineHeight: 23, marginTop: 12, marginBottom: 22 },
   previewRow: {
-    minHeight: 128,
+    minHeight: 126,
     borderRadius: 23,
     borderWidth: 1,
     borderColor: colors.line,

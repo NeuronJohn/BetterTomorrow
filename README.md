@@ -197,3 +197,11 @@ This pass focuses only on cards with thumbnails:
 - Memory saved card
 
 It keeps the app-wide nav/header/button system intact and makes the card compositions denser, with bigger thumbnails and less dead space.
+
+
+## v1.29 visible thumbnail composition reset
+
+This pass makes the thumbnail-card change visually obvious:
+- Main cards no longer use the old lower two-column metadata layout.
+- Buttons are only locally tightened inside thumbnail cards.
+- Compact cards and saved cards use larger thumbnails with less dead space.
