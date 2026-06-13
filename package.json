@@ -1,6 +1,6 @@
 {
   "name": "daily-companion-component-ui",
-  "version": "1.26.0-thumbnail-system",
+  "version": "1.27.0-card-styles",
   "private": true,
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {

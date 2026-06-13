@@ -175,3 +175,14 @@ Use these fields in the daily pack:
 - `thumbnailResizeMode`: `"cover"` by default, `"contain"` when needed.
 
 See `THUMBNAIL_CARD_DATA.md`.
+
+
+## v1.27 tab-aware card styles
+
+Cards with thumbnails now have tab-aware styles:
+- Updates focus card: `cardStyle: "main"`
+- Brief card: `briefCardStyle: "compact"`
+- Memory saved card: `memoryCardStyle: "saved"`
+- Secondary update cards: `cardStyle: "compact"`
+
+Use actual video thumbnails via `thumbnailUrl`. See `THUMBNAIL_CARD_DATA.md`.

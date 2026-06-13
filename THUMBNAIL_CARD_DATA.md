@@ -1,46 +1,66 @@
-# Thumbnail card data options
+# Card style + thumbnail data options
 
-Cards with thumbnails now use explicit data-driven sizing.
+Daily pack data now maps to stable card styles, instead of one thumbnail layout trying to fit every tab.
 
-## Thumbnail source
+## Core thumbnail fields
 
-Use either:
+Use a real URL whenever possible:
 
 ```json
 "thumbnailUrl": "https://img.youtube.com/vi/VIDEO_ID/hqdefault.jpg"
 ```
 
-or a bundled key:
+Bundled fallback:
 
 ```json
 "thumbnailKey": "ticketTracker"
 ```
 
-For YouTube videos, send the actual video thumbnail URL in `thumbnailUrl`.
+YouTube videos should use the actual video thumbnail URL. The app will render it into the selected card style.
 
-## Thumbnail size options
+## Card styles
 
-Use this on a card or update entry:
+### `main`
 
-```json
-"thumbnailSize": "main"
-```
-
-or
+Large focus card for the Updates tab. It uses a full-width media band, then text/meta underneath.
 
 ```json
-"thumbnailSize": "small"
+{
+  "label": "YOUTUBE",
+  "title": "Build a clean ticket tracker UI",
+  "description": "Use it as a fast AI-assisted project and commit the result today.",
+  "duration": "10 min",
+  "thumbnailUrl": "https://img.youtube.com/vi/VIDEO_ID/hqdefault.jpg",
+  "cardStyle": "main"
+}
 ```
 
-### main
-Large focus card. Best for the first Updates card or the main daily video.
+### `compact`
 
-### small
-Side-by-side compact card. Best for Brief, saved items, and secondary updates.
+Side-by-side layout for Brief and secondary cards. Thumbnail is larger than before but stays inside the card.
 
-## Per-screen override
+```json
+{
+  "label": "YOUTUBE",
+  "title": "Build a clean ticket tracker UI",
+  "description": "Use it as a fast AI-assisted project and commit the result today.",
+  "duration": "10 min",
+  "thumbnailUrl": "https://img.youtube.com/vi/VIDEO_ID/hqdefault.jpg",
+  "cardStyle": "compact"
+}
+```
 
-The same item can be large on Updates and small on Brief/Memory:
+### `buildStatus`
+
+Used automatically when an update entry references `buildStatus`.
+
+### `saved`
+
+Used by Memory saved cards. It gets its own layout so the bookmark, text, and thumbnail do not fight each other.
+
+## Per-tab overrides
+
+The same item can render differently on each tab:
 
 ```json
 {
@@ -51,15 +71,41 @@ The same item can be large on Updates and small on Brief/Memory:
   "description": "Why it matters today.",
   "duration": "10 min",
   "thumbnailUrl": "https://img.youtube.com/vi/VIDEO_ID/hqdefault.jpg",
-  "thumbnailSize": "main",
-  "briefThumbnailSize": "small",
-  "memoryThumbnailSize": "small"
+  "cardStyle": "main",
+  "briefCardStyle": "compact",
+  "memoryCardStyle": "saved"
 }
+```
+
+## Updates array
+
+The Updates tab reads the `updates` array directly:
+
+```json
+"updates": [
+  {
+    "ref": "featured",
+    "cardStyle": "main"
+  },
+  {
+    "id": "quick-video",
+    "type": "youtube",
+    "label": "YOUTUBE",
+    "title": "A shorter useful video",
+    "description": "One sentence explaining why it helps today.",
+    "duration": "8 min",
+    "thumbnailUrl": "https://img.youtube.com/vi/VIDEO_ID/hqdefault.jpg",
+    "cardStyle": "compact"
+  },
+  {
+    "ref": "buildStatus"
+  }
+]
 ```
 
 ## Aspect ratio
 
-Default is `1.777` (16:9). For a slightly wider/shorter focus card:
+Default is `16 / 9` (`1.777`). For a wider/shorter focus thumbnail:
 
 ```json
 "thumbnailAspectRatio": 1.9
@@ -67,7 +113,7 @@ Default is `1.777` (16:9). For a slightly wider/shorter focus card:
 
 ## Resize mode
 
-Default is cover. You can use contain only when you must show the full image without crop:
+Default is `cover`. Use `contain` only when cropping would ruin the thumbnail:
 
 ```json
 "thumbnailResizeMode": "contain"

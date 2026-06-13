@@ -16,12 +16,32 @@ export function getCardThumbSource(item) {
   return getThumbSource(item);
 }
 
-function imageMode(item) {
+function resizeMode(item) {
   return item?.thumbnailResizeMode || 'cover';
 }
 
 export function Panel({ children, style }) {
   return <View style={[styles.panel, style]}>{children}</View>;
+}
+
+function ThumbFrame({ item, style }) {
+  return (
+    <View style={[styles.thumbFrameBase, style]}>
+      <Image source={getCardThumbSource(item)} resizeMode={resizeMode(item)} style={styles.thumbImage} />
+    </View>
+  );
+}
+
+function PressableThumbFrame({ item, onTune, style }) {
+  return (
+    <Pressable
+      onLongPress={() => onTune?.(item)}
+      delayLongPress={450}
+      style={[styles.thumbFrameBase, style]}
+    >
+      <Image source={getCardThumbSource(item)} resizeMode={resizeMode(item)} style={styles.thumbImage} />
+    </Pressable>
+  );
 }
 
 function ActionRow({ primaryLabel = 'Open item' }) {
@@ -34,45 +54,36 @@ function ActionRow({ primaryLabel = 'Open item' }) {
   );
 }
 
-function Thumb({ item, style, imageStyle }) {
+function MetaStack({ item, duration = true }) {
   return (
-    <Image
-      source={getCardThumbSource(item)}
-      resizeMode={imageMode(item)}
-      style={[styles.thumbImage, imageStyle]}
-    />
+    <View style={styles.metaStack}>
+      <Text allowFontScaling={false} style={styles.label} numberOfLines={1}>
+        {item.label || 'UPDATE'}
+      </Text>
+      {duration ? (
+        <View style={styles.timeRow}>
+          <AssetIcon name="clock" size={21} color={colors.muted} />
+          <MetaPill label={item.duration || '10 min'} style={styles.timePill} />
+        </View>
+      ) : null}
+    </View>
   );
 }
 
-function MainFocusMediaCard({ item, onTune }) {
+function MainFocusCard({ item, onTune }) {
   const aspectRatio = Number(item?.thumbnailAspectRatio) || 16 / 9;
 
   return (
-    <Panel style={styles.mainMediaPanel}>
-      <Pressable
-        onLongPress={() => onTune?.(item)}
-        delayLongPress={450}
-        style={[styles.mainThumbFrame, { aspectRatio }]}
-      >
-        <Thumb item={item} />
-      </Pressable>
+    <Panel style={styles.mainCard}>
+      <PressableThumbFrame item={item} onTune={onTune} style={[styles.mainThumb, { aspectRatio }]} />
 
-      <View style={styles.mainInfoRow}>
-        <View style={styles.mainMetaCol}>
-          <Text allowFontScaling={false} style={styles.youtubeLabel} numberOfLines={1}>
-            {item.label || 'YOUTUBE'}
-          </Text>
-          <View style={styles.timeRow}>
-            <AssetIcon name="clock" size={21} color={colors.muted} />
-            <MetaPill label={item.duration || '10 min'} style={styles.timePill} />
-          </View>
-        </View>
-
-        <View style={styles.copyCol}>
-          <Text allowFontScaling={false} style={styles.cardTitle} numberOfLines={2}>
+      <View style={styles.mainContentGrid}>
+        <MetaStack item={item} />
+        <View style={styles.mainCopy}>
+          <Text allowFontScaling={false} style={styles.title} numberOfLines={2}>
             {item.title}
           </Text>
-          <Text allowFontScaling={false} style={styles.cardDescription} numberOfLines={3}>
+          <Text allowFontScaling={false} style={styles.description} numberOfLines={3}>
             {item.description}
           </Text>
         </View>
@@ -83,18 +94,18 @@ function MainFocusMediaCard({ item, onTune }) {
   );
 }
 
-function SmallMediaCard({ item, onTune }) {
+function CompactFocusCard({ item, onTune }) {
   return (
-    <Panel style={styles.smallMediaPanel}>
-      <View style={styles.smallBody}>
-        <View style={styles.smallTextCol}>
-          <Text allowFontScaling={false} style={styles.youtubeLabel} numberOfLines={1}>
-            {item.label || 'YOUTUBE'}
+    <Panel style={styles.compactCard}>
+      <View style={styles.compactTop}>
+        <View style={styles.compactCopy}>
+          <Text allowFontScaling={false} style={styles.label} numberOfLines={1}>
+            {item.label || 'UPDATE'}
           </Text>
-          <Text allowFontScaling={false} style={styles.cardTitle} numberOfLines={3}>
+          <Text allowFontScaling={false} style={styles.title} numberOfLines={3}>
             {item.title}
           </Text>
-          <Text allowFontScaling={false} style={styles.cardDescription} numberOfLines={4}>
+          <Text allowFontScaling={false} style={styles.description} numberOfLines={4}>
             {item.description}
           </Text>
           <View style={styles.timeRow}>
@@ -103,13 +114,7 @@ function SmallMediaCard({ item, onTune }) {
           </View>
         </View>
 
-        <Pressable
-          onLongPress={() => onTune?.(item)}
-          delayLongPress={450}
-          style={styles.smallThumbFrame}
-        >
-          <Thumb item={item} />
-        </Pressable>
+        <PressableThumbFrame item={item} onTune={onTune} style={styles.compactThumb} />
       </View>
 
       <ActionRow />
@@ -118,28 +123,26 @@ function SmallMediaCard({ item, onTune }) {
 }
 
 export function UpdatesFeatureCard({ item, onTune }) {
-  const size = item?.updatesThumbnailSize || item?.thumbnailSize || 'main';
-  if (size === 'small') return <SmallMediaCard item={item} onTune={onTune} />;
-  return <MainFocusMediaCard item={item} onTune={onTune} />;
+  const style = item?.updatesCardStyle || item?.cardStyle || item?.thumbnailSize || 'main';
+  if (style === 'small' || style === 'compact') return <CompactFocusCard item={item} onTune={onTune} />;
+  return <MainFocusCard item={item} onTune={onTune} />;
 }
 
 export function BriefFeatureCard({ item, onTune }) {
-  const size = item?.briefThumbnailSize || 'small';
-  if (size === 'main') return <MainFocusMediaCard item={item} onTune={onTune} />;
-  return <SmallMediaCard item={item} onTune={onTune} />;
+  const style = item?.briefCardStyle || item?.briefThumbnailSize || 'compact';
+  if (style === 'main') return <MainFocusCard item={item} onTune={onTune} />;
+  return <CompactFocusCard item={item} onTune={onTune} />;
 }
 
 export function BuildStatusCard({ item, mode = 'updates' }) {
   const brief = mode === 'brief';
   return (
-    <Panel style={styles.buildPanel}>
-      <View style={styles.buildBody}>
-        <View style={styles.buildThumbFrame}>
-          <Image source={getThumbSource(item)} resizeMode={item?.thumbnailResizeMode || 'cover'} style={styles.thumbImage} />
-        </View>
+    <Panel style={styles.buildCard}>
+      <View style={styles.buildTop}>
+        <ThumbFrame item={item} style={styles.buildThumb} />
 
-        <View style={styles.buildText}>
-          <View style={styles.buildTopLine}>
+        <View style={styles.buildCopy}>
+          <View style={styles.buildLabelRow}>
             <Text allowFontScaling={false} style={styles.buildLabel} numberOfLines={1}>
               {item.label || 'BUILD STATUS'}
             </Text>
@@ -176,11 +179,9 @@ export function TuneSheet({ item, visible, onClose }) {
         </Text>
 
         <View style={styles.previewRow}>
-          <View style={styles.previewThumbFrame}>
-            <Thumb item={item} />
-          </View>
+          <ThumbFrame item={item} style={styles.previewThumb} />
           <View style={styles.previewCopy}>
-            <Text allowFontScaling={false} style={styles.youtubeLabel} numberOfLines={1}>{item.label || 'YOUTUBE'}</Text>
+            <Text allowFontScaling={false} style={styles.label} numberOfLines={1}>{item.label || 'UPDATE'}</Text>
             <Text allowFontScaling={false} style={styles.previewTitle} numberOfLines={2}>{item.title}</Text>
             <Text allowFontScaling={false} style={styles.previewDesc} numberOfLines={1}>Useful for today’s skill sprint.</Text>
           </View>
@@ -214,67 +215,65 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
 
-  mainMediaPanel: {
-    padding: 16,
-  },
-  mainThumbFrame: {
-    width: '100%',
-    borderRadius: 22,
+  thumbFrameBase: {
     borderWidth: 1,
     borderColor: colors.lineStrong,
     backgroundColor: '#07111D',
     overflow: 'hidden',
   },
-  mainInfoRow: {
-    flexDirection: 'row',
-    gap: 16,
-    alignItems: 'center',
-    paddingTop: 14,
-    minHeight: 96,
-  },
-  mainMetaCol: {
-    width: 112,
-    gap: 11,
-    minWidth: 0,
+  thumbImage: {
+    width: '100%',
+    height: '100%',
   },
 
-  smallMediaPanel: {
+  mainCard: {
     padding: 16,
   },
-  smallBody: {
-    flexDirection: 'row',
-    gap: 15,
-    alignItems: 'center',
-    minHeight: 162,
+  mainThumb: {
+    width: '100%',
+    borderRadius: 22,
   },
-  smallTextCol: {
+  mainContentGrid: {
+    flexDirection: 'row',
+    gap: 18,
+    alignItems: 'center',
+    paddingTop: 16,
+    minHeight: 104,
+  },
+  mainCopy: {
+    flex: 1,
+    minWidth: 0,
+    justifyContent: 'center',
+  },
+  metaStack: {
+    width: 112,
+    minWidth: 0,
+    gap: 11,
+  },
+
+  compactCard: {
+    padding: 16,
+  },
+  compactTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+    minHeight: 172,
+  },
+  compactCopy: {
     flex: 1,
     minWidth: 0,
     gap: 8,
     justifyContent: 'center',
   },
-  smallThumbFrame: {
-    width: '46%',
+  compactThumb: {
+    width: '50%',
     aspectRatio: 16 / 9,
+    borderRadius: 20,
     flexShrink: 0,
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: colors.lineStrong,
-    backgroundColor: '#07111D',
-    overflow: 'hidden',
   },
 
-  thumbImage: {
-    width: '100%',
-    height: '100%',
-  },
-  copyCol: {
-    flex: 1,
-    minWidth: 0,
-    justifyContent: 'center',
-  },
-
-  youtubeLabel: {
+  label: {
     color: colors.coral,
     fontSize: 12.5,
     lineHeight: 16,
@@ -282,17 +281,17 @@ const styles = StyleSheet.create({
     letterSpacing: .35,
     includeFontPadding: false,
   },
-  cardTitle: {
+  title: {
     color: colors.text,
-    fontSize: 18.5,
-    lineHeight: 23,
+    fontSize: 18.8,
+    lineHeight: 23.5,
     fontWeight: '900',
     includeFontPadding: false,
   },
-  cardDescription: {
+  description: {
     color: colors.muted,
-    fontSize: 13.8,
-    lineHeight: 19,
+    fontSize: 14.2,
+    lineHeight: 20,
     includeFontPadding: false,
   },
   timeRow: {
@@ -323,43 +322,39 @@ const styles = StyleSheet.create({
   primaryAction: { flex: 2.08, minWidth: 0 },
   fullAction: { flex: 1, minWidth: 0 },
 
-  buildPanel: {
+  buildCard: {
     padding: 16,
   },
-  buildBody: {
+  buildTop: {
     flexDirection: 'row',
-    gap: 16,
+    gap: 18,
     alignItems: 'center',
-    minHeight: 102,
+    minHeight: 122,
   },
-  buildThumbFrame: {
-    width: '43%',
+  buildThumb: {
+    width: '46%',
     aspectRatio: 16 / 9,
-    borderRadius: 17,
-    borderWidth: 1,
-    borderColor: colors.lineStrong,
-    backgroundColor: '#07111D',
+    borderRadius: 19,
     flexShrink: 0,
-    overflow: 'hidden',
   },
-  buildText: {
+  buildCopy: {
     flex: 1,
     minWidth: 0,
-    paddingRight: 2,
+    justifyContent: 'center',
   },
-  buildTopLine: {
+  buildLabelRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     gap: 10,
   },
   buildLabel: {
     color: colors.gold,
-    fontSize: 12.5,
+    fontSize: 12.8,
     lineHeight: 16,
     fontWeight: '900',
     letterSpacing: .3,
     includeFontPadding: false,
+    flex: 1,
   },
   more: {
     color: colors.muted,
@@ -377,8 +372,8 @@ const styles = StyleSheet.create({
   },
   buildDescription: {
     color: colors.muted,
-    fontSize: 13.8,
-    lineHeight: 19.5,
+    fontSize: 14.2,
+    lineHeight: 20,
     marginTop: 7,
     includeFontPadding: false,
   },
@@ -397,7 +392,7 @@ const styles = StyleSheet.create({
   },
   handle: { alignSelf: 'center', width: 82, height: 7, borderRadius: 99, backgroundColor: '#607189', marginBottom: 22 },
   sheetTitle: { color: colors.text, fontSize: 34, lineHeight: 40, fontWeight: '900', includeFontPadding: false },
-  sheetCopy: { color: colors.muted, fontSize: 15.5, lineHeight: 23, marginTop: 12, marginBottom: 22, includeFontPadding: false },
+  sheetCopy: { color: colors.muted, fontSize: 15.5, lineHeight: 23, marginTop: 12, marginBottom: 22 },
   previewRow: {
     minHeight: 138,
     borderRadius: 23,
@@ -410,13 +405,13 @@ const styles = StyleSheet.create({
     gap: 14,
     marginBottom: 20,
   },
-  previewThumbFrame: { width: 136, aspectRatio: 16 / 9, borderRadius: 16, backgroundColor: '#07111D', overflow: 'hidden' },
+  previewThumb: { width: 136, aspectRatio: 16 / 9, borderRadius: 16 },
   previewCopy: { flex: 1, minWidth: 0, paddingRight: 2 },
-  previewTitle: { color: colors.text, fontSize: 17, lineHeight: 22, fontWeight: '900', marginTop: 7, includeFontPadding: false },
-  previewDesc: { color: colors.muted, fontSize: 13.5, lineHeight: 18, marginTop: 7, includeFontPadding: false },
+  previewTitle: { color: colors.text, fontSize: 17, lineHeight: 22, fontWeight: '900', marginTop: 7 },
+  previewDesc: { color: colors.muted, fontSize: 13.5, lineHeight: 18, marginTop: 7 },
   optionGrid: { minHeight: 184, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', rowGap: 14, marginBottom: 18 },
   optionButton: { width: '47.2%', minWidth: 0 },
   optionButtonAccent: { width: '47.2%', borderColor: colors.teal, minWidth: 0 },
   reason: { minHeight: 74, borderRadius: 20, borderWidth: 1, borderColor: colors.line, backgroundColor: 'rgba(5, 10, 17, .86)', justifyContent: 'center', paddingHorizontal: 20, marginBottom: 16 },
-  reasonText: { color: colors.dim, fontSize: 15, lineHeight: 19, includeFontPadding: false },
+  reasonText: { color: colors.dim, fontSize: 15, lineHeight: 19 },
 });

@@ -187,3 +187,12 @@
 - Updates screen now resolves the `updates` array instead of hardcoding only the featured/build cards, so daily JSON can build thumbnail cards directly.
 - Saved item thumbnail source now uses the same card-thumbnail source logic as Brief/Updates.
 - Added THUMBNAIL_CARD_DATA.md with JSON examples.
+
+
+# v1.27 tab-aware card style pass
+
+- Added tab-aware card styles so imported data can render differently in Brief, Updates, and Memory while keeping the same look and feel.
+- Rebuilt thumbnail cards into stable style variants: `main`, `compact`, `buildStatus`, and Memory `saved`.
+- Larger thumbnails, less dead space, and cleaner text placement inside thumbnail cards.
+- Memory saved thumbnail card now has its own layout: bigger thumbnail, bookmark in a label row, no title overlap.
+- Updated daily pack template and THUMBNAIL_CARD_DATA.md with exact JSON options.

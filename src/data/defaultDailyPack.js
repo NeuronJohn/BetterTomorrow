@@ -53,7 +53,10 @@ export const defaultDailyPack = {
     "briefThumbnailSize": "small",
     "memoryThumbnailSize": "small",
     "thumbnailResizeMode": "cover",
-    "thumbnailAspectRatio": 1.777
+    "thumbnailAspectRatio": 1.777,
+    "cardStyle": "main",
+    "briefCardStyle": "compact",
+    "memoryCardStyle": "saved"
   },
   "buildStatus": {
     "id": "android-dev-build",
@@ -93,7 +96,8 @@ export const defaultDailyPack = {
   "updates": [
     {
       "ref": "featured",
-      "thumbnailSize": "main"
+      "thumbnailSize": "main",
+      "cardStyle": "main"
     },
     {
       "ref": "buildStatus"

@@ -32,14 +32,18 @@ export default function MemoryScreen({ activeTab = 'Memory', onNavigate, pack })
       <Panel style={styles.savedCard}>
         <View style={styles.savedTopRow}>
           <Image source={getMemoryThumbSource(savedItem)} resizeMode="cover" style={styles.savedThumb} />
+
           <View style={styles.savedCopy}>
-            <Text allowFontScaling={false} style={styles.youtube} numberOfLines={1}>{savedItem.label || 'YOUTUBE'}</Text>
+            <View style={styles.savedLabelRow}>
+              <Text allowFontScaling={false} style={styles.youtube} numberOfLines={1}>{savedItem.label || 'YOUTUBE'}</Text>
+              <Pressable style={styles.activeBookmark} onPress={() => {}}>
+                <AssetIcon name="bookmark" size={25} color={colors.teal} />
+              </Pressable>
+            </View>
+
             <Text allowFontScaling={false} style={styles.savedTitle} numberOfLines={3}>{savedItem.title}</Text>
             <Text allowFontScaling={false} style={styles.savedDesc} numberOfLines={2}>Useful for today’s skill sprint.</Text>
           </View>
-          <Pressable style={styles.activeBookmark} onPress={() => {}}>
-            <AssetIcon name="bookmark" size={28} color={colors.teal} />
-          </Pressable>
         </View>
 
         <View style={styles.savedMetaRow}>
@@ -105,25 +109,24 @@ const styles = StyleSheet.create({
   sectionTitle: { color: colors.text, fontSize: 23, lineHeight: 29, fontWeight: '900', flex: 1 },
   sectionAction: { color: colors.blue, fontSize: 16.5, lineHeight: 22, fontWeight: '800' },
 
-  savedCard: { padding: 14 },
-  savedTopRow: { flexDirection: 'row', gap: 14, alignItems: 'center', minHeight: 112 },
-  savedThumb: { width: '46%', aspectRatio: 16 / 9, borderRadius: 17, borderWidth: 1, borderColor: colors.lineStrong, backgroundColor: '#07111D' },
-  savedCopy: { flex: 1, minWidth: 0, paddingRight: 46 },
-  youtube: { color: colors.coral, fontSize: 12.5, lineHeight: 16, fontWeight: '900', letterSpacing: .5 },
-  savedTitle: { color: colors.text, fontSize: 19.5, lineHeight: 24, fontWeight: '900', marginTop: 8 },
-  savedDesc: { color: colors.muted, fontSize: 14.5, lineHeight: 20, marginTop: 8 },
+  savedCard: { padding: 16 },
+  savedTopRow: { flexDirection: 'row', gap: 16, alignItems: 'center', minHeight: 130 },
+  savedThumb: { width: '50%', aspectRatio: 16 / 9, borderRadius: 19, borderWidth: 1, borderColor: colors.lineStrong, backgroundColor: '#07111D' },
+  savedCopy: { flex: 1, minWidth: 0, justifyContent: 'center' },
+  youtube: { color: colors.coral, fontSize: 12.5, lineHeight: 16, fontWeight: '900', letterSpacing: .5, flex: 1, minWidth: 0 },
+  savedTitle: { color: colors.text, fontSize: 18.8, lineHeight: 23.5, fontWeight: '900', marginTop: 8 },
+  savedDesc: { color: colors.muted, fontSize: 14.2, lineHeight: 20, marginTop: 8 },
+  savedLabelRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   activeBookmark: {
-    position: 'absolute',
-    right: 18,
-    top: 18,
-    width: 44,
-    height: 44,
+    width: 42,
+    height: 42,
     borderRadius: 14,
     borderWidth: 1,
     borderColor: colors.teal,
     backgroundColor: 'rgba(7, 17, 29, .9)',
     alignItems: 'center',
     justifyContent: 'center',
+    flexShrink: 0,
   },
   savedMetaRow: { flexDirection: 'row', alignItems: 'center', gap: 16, marginTop: 16, paddingTop: 12, borderTopWidth: 1, borderTopColor: colors.line },
   metaPair: { flexDirection: 'row', alignItems: 'center', gap: 7 },
