@@ -123,3 +123,13 @@
 - Fixed Updates thumbnail layout by hard-capping thumbnail width; it can no longer become a giant card image.
 - Fixed Brief thumbnail layout with a fixed thumbnail width so it cannot dominate the card.
 - Added inner horizontal padding to Updates/Brief/Build action button rows so buttons do not sit on card edges.
+
+
+# v1.20 device-fit reset
+
+- Dissected the actual issue: thumbnail frames were still allowed to grow into giant sections.
+- Rewrote Brief and Updates video cards into a shared fixed-thumbnail layout.
+- Right-side thumbnail is now a hard 156x88 frame and can no longer grow into a giant image.
+- Build thumbnail is fixed to a compact frame.
+- Action rows now have inner horizontal padding so buttons do not touch card edges.
+- Restored Remembered preferences to horizontal scrolling cards.

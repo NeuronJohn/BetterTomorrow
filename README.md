@@ -100,3 +100,13 @@ It does not modify Plan or Memory screen files.
 
 This patch keeps Plan unchanged. Memory is only touched to restore the Remembered preferences horizontal scroller.
 The thumbnail fix is now layout-based: the right-side thumbnail has a fixed width so it cannot expand into a giant image on S24/Pixel.
+
+
+## v1.20 device-fit note
+
+The thumbnail issue is fixed at the layout level:
+- Brief/Updates video thumbnails use a fixed 156x88 frame.
+- The image can no longer decide the card height.
+- Action buttons have dedicated padding inside the card.
+
+Remembered preferences are back to horizontal scroll.
