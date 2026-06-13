@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { thumbnails } from '../data/assets';
 import { colors } from '../theme/tokens';
 import AssetIcon from './AssetIcon';
@@ -21,7 +21,7 @@ export function Panel({ children, style }) {
 
 function ActionRow({ primaryLabel = 'Open item' }) {
   return (
-    <View style={styles.threeActions}>
+    <View style={styles.actionRow}>
       <PillButton label="Save" icon="bookmark" style={styles.secondaryAction} />
       <PillButton label="Hide" icon="hide" style={styles.secondaryAction} />
       <PillButton label={primaryLabel} icon="play" primary style={styles.primaryAction} />
@@ -31,23 +31,33 @@ function ActionRow({ primaryLabel = 'Open item' }) {
 
 export function UpdatesFeatureCard({ item, onTune }) {
   return (
-    <Panel style={styles.updatesPanel}>
-      <Pressable onLongPress={() => onTune?.(item)} delayLongPress={450} style={styles.updatesThumbFrame}>
-        <Image source={getCardThumbSource(item)} resizeMode="cover" style={styles.updatesThumb} />
+    <Panel style={styles.mediaPanel}>
+      <Pressable
+        onLongPress={() => onTune?.(item)}
+        delayLongPress={450}
+        style={styles.updatesThumbFrame}
+      >
+        <Image source={getCardThumbSource(item)} resizeMode="cover" style={styles.thumbImage} />
       </Pressable>
 
       <View style={styles.updatesInfoRow}>
         <View style={styles.updatesMetaCol}>
-          <Text allowFontScaling={false} style={styles.youtubeLabel} numberOfLines={1}>{item.label || 'YOUTUBE'}</Text>
+          <Text allowFontScaling={false} style={styles.youtubeLabel} numberOfLines={1}>
+            {item.label || 'YOUTUBE'}
+          </Text>
           <View style={styles.timeRow}>
-            <AssetIcon name="clock" size={22} color={colors.muted} />
+            <AssetIcon name="clock" size={21} color={colors.muted} />
             <MetaPill label={item.duration || '10 min'} style={styles.timePill} />
           </View>
         </View>
 
-        <View style={styles.updatesCopyCol}>
-          <Text allowFontScaling={false} style={styles.videoTitle} numberOfLines={2}>{item.title}</Text>
-          <Text allowFontScaling={false} style={styles.videoDesc} numberOfLines={3}>{item.description}</Text>
+        <View style={styles.copyCol}>
+          <Text allowFontScaling={false} style={styles.cardTitle} numberOfLines={2}>
+            {item.title}
+          </Text>
+          <Text allowFontScaling={false} style={styles.cardDescription} numberOfLines={3}>
+            {item.description}
+          </Text>
         </View>
       </View>
 
@@ -57,24 +67,31 @@ export function UpdatesFeatureCard({ item, onTune }) {
 }
 
 export function BriefFeatureCard({ item, onTune }) {
-  const { width } = useWindowDimensions();
-  const thumbWidth = Math.min(Math.max(width * 0.43, 178), 220);
-
   return (
-    <Panel style={styles.briefVideoPanel}>
-      <View style={styles.briefVideoBody}>
-        <View style={styles.briefTextCol}>
-          <Text allowFontScaling={false} style={styles.youtubeLabel} numberOfLines={1}>{item.label || 'YOUTUBE'}</Text>
-          <Text allowFontScaling={false} style={styles.videoTitle} numberOfLines={3}>{item.title}</Text>
-          <Text allowFontScaling={false} style={styles.videoDesc} numberOfLines={4}>{item.description}</Text>
+    <Panel style={styles.mediaPanel}>
+      <View style={styles.sideBySideBody}>
+        <View style={styles.sideTextCol}>
+          <Text allowFontScaling={false} style={styles.youtubeLabel} numberOfLines={1}>
+            {item.label || 'YOUTUBE'}
+          </Text>
+          <Text allowFontScaling={false} style={styles.cardTitle} numberOfLines={3}>
+            {item.title}
+          </Text>
+          <Text allowFontScaling={false} style={styles.cardDescription} numberOfLines={4}>
+            {item.description}
+          </Text>
           <View style={styles.timeRow}>
-            <AssetIcon name="clock" size={22} color={colors.muted} />
+            <AssetIcon name="clock" size={21} color={colors.muted} />
             <MetaPill label={item.duration || '10 min'} style={styles.timePill} />
           </View>
         </View>
 
-        <Pressable onLongPress={() => onTune?.(item)} delayLongPress={450} style={[styles.briefThumbFrame, { width: thumbWidth }]}>
-          <Image source={getCardThumbSource(item)} resizeMode="cover" style={styles.briefThumb} />
+        <Pressable
+          onLongPress={() => onTune?.(item)}
+          delayLongPress={450}
+          style={styles.sideThumbFrame}
+        >
+          <Image source={getCardThumbSource(item)} resizeMode="cover" style={styles.thumbImage} />
         </Pressable>
       </View>
 
@@ -91,11 +108,17 @@ export function BuildStatusCard({ item, mode = 'updates' }) {
         <Image source={getThumbSource(item)} resizeMode="cover" style={styles.buildThumb} />
         <View style={styles.buildText}>
           <View style={styles.buildTopLine}>
-            <Text allowFontScaling={false} style={styles.buildLabel} numberOfLines={1}>{item.label || 'BUILD STATUS'}</Text>
+            <Text allowFontScaling={false} style={styles.buildLabel} numberOfLines={1}>
+              {item.label || 'BUILD STATUS'}
+            </Text>
             <Text allowFontScaling={false} style={styles.more}>•••</Text>
           </View>
-          <Text allowFontScaling={false} style={styles.buildTitle} numberOfLines={2}>{item.title}</Text>
-          <Text allowFontScaling={false} style={styles.buildDescription} numberOfLines={3}>{item.description}</Text>
+          <Text allowFontScaling={false} style={styles.buildTitle} numberOfLines={2}>
+            {item.title}
+          </Text>
+          <Text allowFontScaling={false} style={styles.buildDescription} numberOfLines={3}>
+            {item.description}
+          </Text>
         </View>
       </View>
 
@@ -116,7 +139,9 @@ export function TuneSheet({ item, visible, onClose }) {
       <View style={styles.sheet}>
         <View style={styles.handle} />
         <Text allowFontScaling={false} style={styles.sheetTitle}>Tune this</Text>
-        <Text allowFontScaling={false} style={styles.sheetCopy}>Choose what should happen with this suggestion. Future mornings adjust from this.</Text>
+        <Text allowFontScaling={false} style={styles.sheetCopy}>
+          Choose what should happen with this suggestion. Future mornings adjust from this.
+        </Text>
 
         <View style={styles.previewRow}>
           <Image source={getCardThumbSource(item)} resizeMode="cover" style={styles.previewThumb} />
@@ -155,109 +180,171 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
 
-  updatesPanel: { padding: 16 },
+  mediaPanel: {
+    padding: 16,
+  },
+
   updatesThumbFrame: {
     width: '100%',
-    aspectRatio: 2.18,
-    borderRadius: 22,
+    aspectRatio: 2.28,
+    borderRadius: 21,
     borderWidth: 1,
     borderColor: colors.lineStrong,
     backgroundColor: '#07111D',
     overflow: 'hidden',
   },
-  updatesThumb: { width: '100%', height: '100%' },
+  thumbImage: {
+    width: '100%',
+    height: '100%',
+  },
   updatesInfoRow: {
     flexDirection: 'row',
-    gap: 18,
-    alignItems: 'center',
-    minHeight: 104,
-    paddingTop: 14,
-  },
-  updatesMetaCol: { width: 122, gap: 12, minWidth: 0 },
-  updatesCopyCol: { flex: 1, minWidth: 0, justifyContent: 'center' },
-
-  briefVideoPanel: { padding: 16 },
-  briefVideoBody: {
-    flexDirection: 'row',
-    alignItems: 'center',
     gap: 16,
-    minHeight: 166,
+    alignItems: 'center',
+    paddingTop: 14,
+    minHeight: 96,
   },
-  briefTextCol: {
+  updatesMetaCol: {
+    width: 112,
+    gap: 11,
+    minWidth: 0,
+  },
+  copyCol: {
     flex: 1,
     minWidth: 0,
-    gap: 9,
     justifyContent: 'center',
   },
-  briefThumbFrame: {
-    flexShrink: 0,
+
+  sideBySideBody: {
+    flexDirection: 'row',
+    gap: 15,
+    alignItems: 'center',
+    minHeight: 162,
+  },
+  sideTextCol: {
+    flex: 1,
+    minWidth: 0,
+    gap: 8,
+    justifyContent: 'center',
+  },
+  sideThumbFrame: {
+    width: '46%',
     aspectRatio: 16 / 9,
+    flexShrink: 0,
     borderRadius: 18,
     borderWidth: 1,
     borderColor: colors.lineStrong,
     backgroundColor: '#07111D',
     overflow: 'hidden',
   },
-  briefThumb: { width: '100%', height: '100%' },
 
   youtubeLabel: {
     color: colors.coral,
-    fontSize: 13,
+    fontSize: 12.5,
     lineHeight: 16,
     fontWeight: '900',
-    letterSpacing: .4,
+    letterSpacing: .35,
     includeFontPadding: false,
   },
-  videoTitle: {
+  cardTitle: {
     color: colors.text,
-    fontSize: 19,
-    lineHeight: 24,
+    fontSize: 18.5,
+    lineHeight: 23,
     fontWeight: '900',
     includeFontPadding: false,
   },
-  videoDesc: {
+  cardDescription: {
     color: colors.muted,
-    fontSize: 14,
+    fontSize: 13.8,
     lineHeight: 19,
     includeFontPadding: false,
   },
-  timeRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  timePill: { alignSelf: 'flex-start', paddingLeft: 8 },
+  timeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  timePill: {
+    alignSelf: 'flex-start',
+    paddingLeft: 8,
+  },
 
-  threeActions: {
+  actionRow: {
     minHeight: 60,
     flexDirection: 'row',
     gap: 12,
-    paddingTop: 18,
+    paddingTop: 16,
     paddingHorizontal: 8,
   },
   twoActions: {
     minHeight: 60,
     flexDirection: 'row',
     gap: 12,
-    paddingTop: 18,
+    paddingTop: 16,
     paddingHorizontal: 8,
   },
   secondaryAction: { flex: 1.08, minWidth: 0 },
-  primaryAction: { flex: 2.05, minWidth: 0 },
+  primaryAction: { flex: 2.08, minWidth: 0 },
   fullAction: { flex: 1, minWidth: 0 },
 
-  buildPanel: { padding: 16 },
-  buildBody: { flexDirection: 'row', gap: 16, alignItems: 'center', minHeight: 108 },
+  buildPanel: {
+    padding: 16,
+  },
+  buildBody: {
+    flexDirection: 'row',
+    gap: 16,
+    alignItems: 'center',
+    minHeight: 102,
+  },
   buildThumb: {
-    width: 138,
-    height: 78,
+    width: '43%',
+    aspectRatio: 16 / 9,
     borderRadius: 17,
     borderWidth: 1,
     borderColor: colors.lineStrong,
     backgroundColor: '#07111D',
+    flexShrink: 0,
   },
-  buildText: { flex: 1, minWidth: 0, paddingRight: 2 },
-  buildTopLine: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 10 },
-  buildLabel: { color: colors.gold, fontSize: 13, lineHeight: 17, fontWeight: '900', letterSpacing: .3, includeFontPadding: false },
-  more: { color: colors.muted, fontSize: 20, fontWeight: '900', letterSpacing: 2 },
-  buildTitle: { color: colors.text, fontSize: 19.5, lineHeight: 25, fontWeight: '900', marginTop: 10, includeFontPadding: false },
-  buildDescription: { color: colors.muted, fontSize: 14.5, lineHeight: 21, marginTop: 8, includeFontPadding: false },
+  buildText: {
+    flex: 1,
+    minWidth: 0,
+    paddingRight: 2,
+  },
+  buildTopLine: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 10,
+  },
+  buildLabel: {
+    color: colors.gold,
+    fontSize: 12.5,
+    lineHeight: 16,
+    fontWeight: '900',
+    letterSpacing: .3,
+    includeFontPadding: false,
+  },
+  more: {
+    color: colors.muted,
+    fontSize: 19,
+    fontWeight: '900',
+    letterSpacing: 2,
+  },
+  buildTitle: {
+    color: colors.text,
+    fontSize: 18.8,
+    lineHeight: 24,
+    fontWeight: '900',
+    marginTop: 9,
+    includeFontPadding: false,
+  },
+  buildDescription: {
+    color: colors.muted,
+    fontSize: 13.8,
+    lineHeight: 19.5,
+    marginTop: 7,
+    includeFontPadding: false,
+  },
 
   sheetLayer: { ...StyleSheet.absoluteFillObject, justifyContent: 'flex-end', paddingBottom: 122, zIndex: 30 },
   scrim: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,.25)' },

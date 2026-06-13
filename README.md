@@ -142,3 +142,21 @@ Plan is intentionally preserved. This pass targets the screens that looked too l
 - Brief morning card now has proper internal padding/flex layout.
 - Memory card layout matches the compact reference more closely.
 - Brief/Updates feature cards are slightly denser while preserving the v1.23 reference direction.
+
+
+## v1.25 thumbnail-card-only pass
+
+This update is intentionally limited to `src/components/Cards.js`.
+
+It fixes only the cards with thumbnails:
+- Brief feature card
+- Updates feature card
+- Build status card
+- Tune preview thumbnail card keeps compatible sizing
+
+Unchanged:
+- Plan screen
+- Memory screen
+- App shell/header/nav
+- Bottom nav
+- Button component styling

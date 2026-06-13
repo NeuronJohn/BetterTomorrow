@@ -165,3 +165,13 @@
 - Fixed Brief morning card by adding the missing internal layout/padding and reducing only Brief content density.
 - Rebuilt Memory into the compact reference style: smaller saved card, compact thumbnail asset, readable sideways preference cards, compact notes.
 - Reduced Brief/Updates/Build card vertical density slightly without changing the overall visual direction.
+
+
+# v1.25 thumbnail-card-only pass
+
+- Only thumbnail card components were changed.
+- Brief video card, Updates video card, and Build status card were rebuilt to remove dead space and bad thumbnail/text placement.
+- No changes to PlanScreen.js, MemoryScreen.js, AppShell.js, BottomNav.js, or Buttons.js.
+- Updates thumbnail keeps the large reference-style top layout but with a shorter, cleaner media band.
+- Brief thumbnail keeps the side-by-side layout but uses card-relative sizing instead of window-based hard sizing.
+- Build status card thumbnail/text row is tightened without changing the button style.
