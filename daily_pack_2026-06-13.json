@@ -71,7 +71,10 @@
     "thumbnailSize": "small",
     "thumbnailResizeMode": "cover",
     "detailsUrl": "https://docs.expo.dev/build/introduction/",
-    "progressUrl": "https://expo.dev/accounts"
+    "progressUrl": "https://expo.dev/accounts",
+    "type": "activeProject",
+    "duration": "Active",
+    "category": "Active project"
   },
   "plan": {
     "title": "Today\u2019s plan",
@@ -116,6 +119,13 @@
         "savedAt": "Saved",
         "duration": "2 min",
         "category": "React Native"
+      },
+      {
+        "ref": "buildStatus",
+        "id": "android-dev-build",
+        "savedAt": "Saved",
+        "duration": "Active",
+        "category": "Active project"
       }
     ],
     "preferences": [

@@ -258,3 +258,16 @@
 - Too much / Not useful still hide the card for the current session after recording a tune note.
 - Unsaving only removes the saved item from Memory/saved state; it does not hide or remove the card from Brief or Updates.
 - Brief/Updates saved buttons update to green Saved after pressing Save.
+
+
+# v1.34 Action UI + Memory sheets
+
+- Saved items `See all` now opens a bottom-sheet list of saved cards with Open and Remove actions.
+- Remembered preferences `Manage` opens a bottom-sheet manager for preferences and backend tune-memory summary.
+- Remembered notes `See all` opens a notes bottom sheet.
+- Note card `•••` opens the notes sheet.
+- Build status `•••` now opens Project options.
+- Project options support Save/Saved, Tune/Hide, View progress, and See details.
+- Build status card now behaves like an active project: visible buttons are View progress / See details; save/hide live under `•••`.
+- Active project saved state is import-friendly via `memory.savedItems`.
+- Added `IMPORT_SCHEMA.md` and updated `CARD_ACTIONS.md`.

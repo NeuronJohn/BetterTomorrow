@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import AssetIcon from '../components/AssetIcon';
 import AppShell from '../components/AppShell';
-import { BriefFeatureCard, BuildStatusCard, Panel, TuneSheet } from '../components/Cards';
+import { BriefFeatureCard, BuildStatusCard, Panel, ProjectOptionsSheet, TuneSheet } from '../components/Cards';
 import ImportDailyPackModal from '../components/ImportDailyPackModal';
 import { PillButton } from '../components/Buttons';
 import { colors } from '../theme/tokens';
 
 export default function BriefScreen({ activeTab = 'Brief', onNavigate, pack, importFromJson, importStatus, hiddenIds = [], savedIds = [], onCardAction }) {
   const [tuneItem, setTuneItem] = useState(null);
+  const [optionsItem, setOptionsItem] = useState(null);
   const [importOpen, setImportOpen] = useState(false);
   const featuredHidden = hiddenIds.includes(pack.featured?.id || pack.featured?.title);
   const buildHidden = hiddenIds.includes(pack.buildStatus?.id || pack.buildStatus?.title);
@@ -47,10 +48,17 @@ export default function BriefScreen({ activeTab = 'Brief', onNavigate, pack, imp
         </Panel>
 
         {!featuredHidden ? <BriefFeatureCard item={featuredForCard} onTune={setTuneItem} onAction={onCardAction} /> : null}
-        {!buildHidden ? <BuildStatusCard item={pack.buildStatus} mode="brief" onAction={onCardAction} onTune={setTuneItem} /> : null}
+        {!buildHidden ? <BuildStatusCard item={pack.buildStatus} mode="brief" onAction={onCardAction} onTune={setTuneItem} onOptions={setOptionsItem} /> : null}
       </AppShell>
 
       <TuneSheet item={tuneItem} visible={!!tuneItem} onClose={() => setTuneItem(null)} onAction={onCardAction} />
+      <ProjectOptionsSheet
+        item={optionsItem}
+        visible={!!optionsItem}
+        onClose={() => setOptionsItem(null)}
+        onAction={onCardAction}
+        onTune={setTuneItem}
+      />
       <ImportDailyPackModal
         visible={importOpen}
         onClose={() => setImportOpen(false)}

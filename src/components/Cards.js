@@ -158,36 +158,40 @@ export function BriefFeatureCard({ item, onTune, onAction }) {
   return <CompactFocusCard item={item} onTune={onTune} onAction={onAction} />;
 }
 
-export function BuildStatusCard({ item, mode = 'updates', onAction, onTune }) {
-  const brief = mode === 'brief';
+export function BuildStatusCard({ item, mode = 'updates', onAction, onTune, onOptions }) {
   const saved = !!item?.saved;
 
   return (
     <Panel style={styles.buildCard}>
       <View style={styles.buildTop}>
-        <ThumbFrame item={item} style={styles.buildThumb} />
+        <Pressable onPress={() => onAction?.('progress', item)} style={styles.buildThumbPress}>
+          <ThumbFrame item={item} style={styles.buildThumb} />
+        </Pressable>
         <View style={styles.buildCopy}>
           <View style={styles.buildLabelRow}>
             <Text allowFontScaling={false} style={styles.buildLabel} numberOfLines={1}>{item.label || 'BUILD STATUS'}</Text>
-            <Text allowFontScaling={false} style={styles.more}>•••</Text>
+            <Pressable style={styles.moreButton} onPress={() => onOptions?.(item)} hitSlop={10}>
+              <Text allowFontScaling={false} style={styles.more}>•••</Text>
+            </Pressable>
           </View>
           <Text allowFontScaling={false} style={styles.buildTitle} numberOfLines={2}>{item.title}</Text>
           <Text allowFontScaling={false} style={styles.buildDescription} numberOfLines={3}>{item.description}</Text>
+          {saved ? <Text allowFontScaling={false} style={styles.projectSaved}>Saved project</Text> : null}
         </View>
       </View>
       <View style={styles.twoActions}>
         <PillButton
-          label={brief ? 'View progress' : saved ? 'Saved' : 'Save'}
-          icon={brief ? 'trend' : 'bookmark'}
-          accentText={brief || saved}
-          onPress={() => onAction?.(brief ? 'progress' : saved ? 'unsave' : 'save', item)}
+          label="View progress"
+          icon="trend"
+          accentText
+          onPress={() => onAction?.('progress', item)}
           style={[styles.tightButton, styles.fullAction]}
         />
         <PillButton
-          label={brief ? 'See details' : 'Hide'}
-          icon={brief ? 'eye' : 'hide'}
-          accentText={brief}
-          onPress={() => brief ? onAction?.('details', item) : onTune?.(item)}
+          label="See details"
+          icon="eye"
+          accentText
+          onPress={() => onAction?.('details', item)}
           style={[styles.tightButton, styles.fullAction]}
         />
       </View>
@@ -195,16 +199,12 @@ export function BuildStatusCard({ item, mode = 'updates', onAction, onTune }) {
   );
 }
 
-export function TuneSheet({ item, visible, onClose, onAction }) {
+function DragSheet({ visible, onClose, children }) {
   const dragY = useRef(new Animated.Value(0)).current;
-  const [reason, setReason] = useState('');
 
   useEffect(() => {
-    if (visible) {
-      setReason('');
-      dragY.setValue(0);
-    }
-  }, [visible, item?.id, item?.title, dragY]);
+    if (visible) dragY.setValue(0);
+  }, [visible, dragY]);
 
   const panResponder = useMemo(() => PanResponder.create({
     onMoveShouldSetPanResponder: (_, gesture) => gesture.dy > 8 && Math.abs(gesture.dy) > Math.abs(gesture.dx),
@@ -228,12 +228,7 @@ export function TuneSheet({ item, visible, onClose, onAction }) {
     },
   }), [dragY, onClose]);
 
-  if (!visible || !item) return null;
-
-  function doAction(action) {
-    onAction?.(action, item, { reason: reason.trim() });
-    onClose?.();
-  }
+  if (!visible) return null;
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
@@ -243,69 +238,133 @@ export function TuneSheet({ item, visible, onClose, onAction }) {
           <View {...panResponder.panHandlers} style={styles.dragZone}>
             <View style={styles.handle} />
           </View>
-
-          <Text allowFontScaling={false} style={styles.sheetTitle}>Tune this</Text>
-          <Text allowFontScaling={false} style={styles.sheetCopy}>
-            Tell tomorrow's pack what to do with suggestions like this.
-          </Text>
-
-          <View style={styles.previewRow}>
-            <ThumbFrame item={item} style={styles.previewThumb} />
-            <View style={styles.previewCopy}>
-              <Text allowFontScaling={false} style={styles.label} numberOfLines={1}>{item.label || 'UPDATE'}</Text>
-              <Text allowFontScaling={false} style={styles.previewTitle} numberOfLines={2}>{item.title}</Text>
-              <Text allowFontScaling={false} style={styles.previewDesc} numberOfLines={1}>
-                {item.saved ? 'Already saved in Memory.' : 'Useful for today’s skill sprint.'}
-              </Text>
-            </View>
-          </View>
-
-          <View style={styles.optionGrid}>
-            <PillButton
-              label={item?.saved ? 'Saved' : 'Save this'}
-              icon="bookmark"
-              accentText={!!item?.saved}
-              onPress={() => doAction(item?.saved ? 'unsave' : 'tune_save')}
-              style={styles.optionButton}
-            />
-            <PillButton
-              label="Use today"
-              icon="bolt"
-              onPress={() => doAction('tune_use_today')}
-              style={styles.optionButtonAccent}
-            />
-            <PillButton
-              label="Too much"
-              icon="minus"
-              onPress={() => doAction('tune_too_much')}
-              style={styles.optionButton}
-            />
-            <PillButton
-              label="Not useful"
-              icon="close"
-              onPress={() => doAction('tune_not_useful')}
-              style={styles.optionButton}
-            />
-          </View>
-
-          <TextInput
-            allowFontScaling={false}
-            value={reason}
-            onChangeText={setReason}
-            placeholder="Optional reason"
-            placeholderTextColor={colors.dim}
-            multiline
-            style={styles.reasonInput}
-            textAlignVertical="top"
-          />
-
-          <View style={styles.twoActions}>
-            <PillButton label="Cancel" onPress={onClose} style={[styles.tightButton, styles.fullAction]} />
-            <PillButton label="Remember" primary onPress={() => doAction('tune_remember')} style={[styles.tightButton, styles.fullAction]} />
-          </View>
+          {children}
         </Animated.View>
       </View>
     </Modal>
+  );
+}
+
+export function ProjectOptionsSheet({ item, visible, onClose, onAction, onTune }) {
+  if (!visible || !item) return null;
+  const saved = !!item.saved;
+
+  function doAction(action) {
+    onAction?.(action, item);
+    onClose?.();
+  }
+
+  function openTune() {
+    onClose?.();
+    setTimeout(() => onTune?.(item), 80);
+  }
+
+  return (
+    <DragSheet visible={visible} onClose={onClose}>
+      <Text allowFontScaling={false} style={styles.sheetTitle}>Project options</Text>
+      <Text allowFontScaling={false} style={styles.sheetCopy}>
+        Active project cards stay focused on progress. Use options when you want to save, tune, or hide the project.
+      </Text>
+
+      <View style={styles.previewRow}>
+        <ThumbFrame item={item} style={styles.previewThumb} />
+        <View style={styles.previewCopy}>
+          <Text allowFontScaling={false} style={styles.buildLabel} numberOfLines={1}>{item.label || 'PROJECT'}</Text>
+          <Text allowFontScaling={false} style={styles.previewTitle} numberOfLines={2}>{item.title}</Text>
+          <Text allowFontScaling={false} style={styles.previewDesc} numberOfLines={1}>{saved ? 'Saved active project.' : 'Not saved yet.'}</Text>
+        </View>
+      </View>
+
+      <View style={styles.optionGrid}>
+        <PillButton label={saved ? 'Saved' : 'Save'} icon="bookmark" accentText={saved} onPress={() => doAction(saved ? 'unsave' : 'save')} style={styles.optionButton} />
+        <PillButton label="Tune / Hide" icon="hide" onPress={openTune} style={styles.optionButtonAccent} />
+        <PillButton label="View progress" icon="trend" accentText onPress={() => doAction('progress')} style={styles.optionButton} />
+        <PillButton label="See details" icon="eye" accentText onPress={() => doAction('details')} style={styles.optionButton} />
+      </View>
+
+      <View style={styles.twoActions}>
+        <PillButton label="Close" onPress={onClose} style={[styles.tightButton, styles.fullAction]} />
+      </View>
+    </DragSheet>
+  );
+}
+
+export function TuneSheet({ item, visible, onClose, onAction }) {
+  const [reason, setReason] = useState('');
+
+  useEffect(() => {
+    if (visible) setReason('');
+  }, [visible, item?.id, item?.title]);
+
+  if (!visible || !item) return null;
+
+  function doAction(action) {
+    onAction?.(action, item, { reason: reason.trim() });
+    onClose?.();
+  }
+
+  return (
+    <DragSheet visible={visible} onClose={onClose}>
+      <Text allowFontScaling={false} style={styles.sheetTitle}>Tune this</Text>
+      <Text allowFontScaling={false} style={styles.sheetCopy}>
+        Tell tomorrow's pack what to do with suggestions like this.
+      </Text>
+
+      <View style={styles.previewRow}>
+        <ThumbFrame item={item} style={styles.previewThumb} />
+        <View style={styles.previewCopy}>
+          <Text allowFontScaling={false} style={styles.label} numberOfLines={1}>{item.label || 'UPDATE'}</Text>
+          <Text allowFontScaling={false} style={styles.previewTitle} numberOfLines={2}>{item.title}</Text>
+          <Text allowFontScaling={false} style={styles.previewDesc} numberOfLines={1}>
+            {item.saved ? 'Already saved in Memory.' : 'Useful for today’s skill sprint.'}
+          </Text>
+        </View>
+      </View>
+
+      <View style={styles.optionGrid}>
+        <PillButton
+          label={item?.saved ? 'Saved' : 'Save this'}
+          icon="bookmark"
+          accentText={!!item?.saved}
+          onPress={() => doAction(item?.saved ? 'unsave' : 'tune_save')}
+          style={styles.optionButton}
+        />
+        <PillButton
+          label="Use today"
+          icon="bolt"
+          onPress={() => doAction('tune_use_today')}
+          style={styles.optionButtonAccent}
+        />
+        <PillButton
+          label="Too much"
+          icon="minus"
+          onPress={() => doAction('tune_too_much')}
+          style={styles.optionButton}
+        />
+        <PillButton
+          label="Not useful"
+          icon="close"
+          onPress={() => doAction('tune_not_useful')}
+          style={styles.optionButton}
+        />
+      </View>
+
+      <TextInput
+        allowFontScaling={false}
+        value={reason}
+        onChangeText={setReason}
+        placeholder="Optional reason"
+        placeholderTextColor={colors.dim}
+        multiline
+        style={styles.reasonInput}
+        textAlignVertical="top"
+      />
+
+      <View style={styles.twoActions}>
+        <PillButton label="Cancel" onPress={onClose} style={[styles.tightButton, styles.fullAction]} />
+        <PillButton label="Remember" primary onPress={() => doAction('tune_remember')} style={[styles.tightButton, styles.fullAction]} />
+      </View>
+    </DragSheet>
   );
 }
 
@@ -355,11 +414,14 @@ const styles = StyleSheet.create({
 
   buildCard: { padding: 14 },
   buildTop: { flexDirection: 'row', gap: 14, alignItems: 'center', minHeight: 106 },
-  buildThumb: { width: '51%', aspectRatio: 16 / 9, borderRadius: 18, flexShrink: 0 },
+  buildThumbPress: { width: '51%', flexShrink: 0 },
+  buildThumb: { width: '100%', aspectRatio: 16 / 9, borderRadius: 18 },
   buildCopy: { flex: 1, minWidth: 0, justifyContent: 'center' },
   buildLabelRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   buildLabel: { color: colors.gold, fontSize: 12.3, lineHeight: 15.5, fontWeight: '900', letterSpacing: .3, includeFontPadding: false, flex: 1 },
+  moreButton: { width: 42, height: 32, borderRadius: 13, alignItems: 'center', justifyContent: 'center', marginRight: -6 },
   more: { color: colors.muted, fontSize: 18, fontWeight: '900', letterSpacing: 2 },
+  projectSaved: { color: colors.teal, fontSize: 12.5, lineHeight: 16, fontWeight: '900', marginTop: 6 },
   buildTitle: { color: colors.text, fontSize: 17.6, lineHeight: 22, fontWeight: '900', marginTop: 7, includeFontPadding: false },
   buildDescription: { color: colors.muted, fontSize: 13.4, lineHeight: 18.5, marginTop: 6, includeFontPadding: false },
 

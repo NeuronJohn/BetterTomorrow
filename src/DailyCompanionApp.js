@@ -25,9 +25,20 @@ function resolveSavedEntry(item, pack) {
   if (item?.id === pack?.featured?.id) {
     return {
       ref: 'featured',
+      id: item.id,
       savedAt: 'Saved',
       duration: item.duration || '10 min',
       category: item.category || 'Productivity',
+    };
+  }
+
+  if (item?.id === pack?.buildStatus?.id) {
+    return {
+      ref: 'buildStatus',
+      id: item.id,
+      savedAt: 'Saved',
+      duration: item.duration || 'Active',
+      category: item.category || 'Active project',
     };
   }
 
@@ -43,6 +54,7 @@ function resolveSavedEntry(item, pack) {
 function sameSavedItem(entry, item, pack) {
   const id = getCardId(item);
   if (entry?.ref === 'featured' && item?.id === pack?.featured?.id) return true;
+  if (entry?.ref === 'buildStatus' && item?.id === pack?.buildStatus?.id) return true;
   return (entry?.id && entry.id === id) || (entry?.title && entry.title === item?.title);
 }
 
@@ -105,8 +117,9 @@ export default function DailyCompanionApp() {
 
   const savedIds = useMemo(() => savedItems.map((entry) => {
     if (entry?.ref === 'featured') return pack.featured?.id || 'featured';
+    if (entry?.ref === 'buildStatus') return pack.buildStatus?.id || 'buildStatus';
     return entry?.id || entry?.title || entry?.ref;
-  }).filter(Boolean), [savedItems, pack.featured?.id]);
+  }).filter(Boolean), [savedItems, pack.featured?.id, pack.buildStatus?.id]);
 
   function isSaved(item) {
     return savedItems.some((entry) => sameSavedItem(entry, item, pack));
@@ -218,6 +231,12 @@ export default function DailyCompanionApp() {
 
     if (action === 'tune_remember') {
       addTuneNote('remember_note', item, meta);
+      return;
+    }
+
+    if (action === 'clear_tune_notes') {
+      setTuneNotes([]);
+      persistTuneNotes([]);
       return;
     }
 

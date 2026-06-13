@@ -64,9 +64,12 @@ export const defaultDailyPack = {
   },
   "buildStatus": {
     "id": "android-dev-build",
+    "type": "activeProject",
     "label": "BUILD STATUS",
     "title": "Android dev build queue",
     "description": "No action needed. Keep reviewing visuals before touching the build.",
+    "duration": "Active",
+    "category": "Active project",
     "thumbnailKey": "buildQueue",
     "thumbnailSize": "small",
     "thumbnailResizeMode": "cover",

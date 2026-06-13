@@ -243,3 +243,11 @@ Tune decisions are stored in backend-only memory state:
 - persisted locally with AsyncStorage
 
 Unsaving only removes the saved Memory item and flips saved buttons back to Save. It does not hide the card.
+
+
+## v1.34 Action UI + Memory sheets
+
+Interactive polish added:
+- `See all` and `Manage` buttons now open real bottom-sheet UI.
+- Build status `•••` opens active project options.
+- Imported data can replicate the same card look using the schema in `IMPORT_SCHEMA.md`.
