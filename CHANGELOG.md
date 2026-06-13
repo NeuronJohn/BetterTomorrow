@@ -175,3 +175,15 @@
 - Updates thumbnail keeps the large reference-style top layout but with a shorter, cleaner media band.
 - Brief thumbnail keeps the side-by-side layout but uses card-relative sizing instead of window-based hard sizing.
 - Build status card thumbnail/text row is tightened without changing the button style.
+
+
+# v1.26 thumbnail system pass
+
+- Rebuilt thumbnail cards around two explicit data-driven variants: `thumbnailSize: "main"` and `thumbnailSize: "small"`.
+- Main thumbnail cards are for focus updates/videos.
+- Small thumbnail cards are for Brief, saved items, and secondary cards.
+- Cards now support actual YouTube thumbnail URLs through `thumbnailUrl`.
+- Added per-screen overrides: `briefThumbnailSize`, `memoryThumbnailSize`, and update-entry `thumbnailSize`.
+- Updates screen now resolves the `updates` array instead of hardcoding only the featured/build cards, so daily JSON can build thumbnail cards directly.
+- Saved item thumbnail source now uses the same card-thumbnail source logic as Brief/Updates.
+- Added THUMBNAIL_CARD_DATA.md with JSON examples.

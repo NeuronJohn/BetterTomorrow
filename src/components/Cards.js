@@ -10,9 +10,14 @@ export function getThumbSource(item) {
   return thumbnails[item?.thumbnailKey] || thumbnails.ticketTracker;
 }
 
-function getCardThumbSource(item) {
+export function getCardThumbSource(item) {
+  if (item?.thumbnailUrl) return { uri: item.thumbnailUrl };
   if (item?.thumbnailKey === 'ticketTracker') return thumbnails.ticketTrackerCard || thumbnails.ticketTracker;
   return getThumbSource(item);
+}
+
+function imageMode(item) {
+  return item?.thumbnailResizeMode || 'cover';
 }
 
 export function Panel({ children, style }) {
@@ -29,19 +34,31 @@ function ActionRow({ primaryLabel = 'Open item' }) {
   );
 }
 
-export function UpdatesFeatureCard({ item, onTune }) {
+function Thumb({ item, style, imageStyle }) {
   return (
-    <Panel style={styles.mediaPanel}>
+    <Image
+      source={getCardThumbSource(item)}
+      resizeMode={imageMode(item)}
+      style={[styles.thumbImage, imageStyle]}
+    />
+  );
+}
+
+function MainFocusMediaCard({ item, onTune }) {
+  const aspectRatio = Number(item?.thumbnailAspectRatio) || 16 / 9;
+
+  return (
+    <Panel style={styles.mainMediaPanel}>
       <Pressable
         onLongPress={() => onTune?.(item)}
         delayLongPress={450}
-        style={styles.updatesThumbFrame}
+        style={[styles.mainThumbFrame, { aspectRatio }]}
       >
-        <Image source={getCardThumbSource(item)} resizeMode="cover" style={styles.thumbImage} />
+        <Thumb item={item} />
       </Pressable>
 
-      <View style={styles.updatesInfoRow}>
-        <View style={styles.updatesMetaCol}>
+      <View style={styles.mainInfoRow}>
+        <View style={styles.mainMetaCol}>
           <Text allowFontScaling={false} style={styles.youtubeLabel} numberOfLines={1}>
             {item.label || 'YOUTUBE'}
           </Text>
@@ -66,11 +83,11 @@ export function UpdatesFeatureCard({ item, onTune }) {
   );
 }
 
-export function BriefFeatureCard({ item, onTune }) {
+function SmallMediaCard({ item, onTune }) {
   return (
-    <Panel style={styles.mediaPanel}>
-      <View style={styles.sideBySideBody}>
-        <View style={styles.sideTextCol}>
+    <Panel style={styles.smallMediaPanel}>
+      <View style={styles.smallBody}>
+        <View style={styles.smallTextCol}>
           <Text allowFontScaling={false} style={styles.youtubeLabel} numberOfLines={1}>
             {item.label || 'YOUTUBE'}
           </Text>
@@ -89,9 +106,9 @@ export function BriefFeatureCard({ item, onTune }) {
         <Pressable
           onLongPress={() => onTune?.(item)}
           delayLongPress={450}
-          style={styles.sideThumbFrame}
+          style={styles.smallThumbFrame}
         >
-          <Image source={getCardThumbSource(item)} resizeMode="cover" style={styles.thumbImage} />
+          <Thumb item={item} />
         </Pressable>
       </View>
 
@@ -100,12 +117,27 @@ export function BriefFeatureCard({ item, onTune }) {
   );
 }
 
+export function UpdatesFeatureCard({ item, onTune }) {
+  const size = item?.updatesThumbnailSize || item?.thumbnailSize || 'main';
+  if (size === 'small') return <SmallMediaCard item={item} onTune={onTune} />;
+  return <MainFocusMediaCard item={item} onTune={onTune} />;
+}
+
+export function BriefFeatureCard({ item, onTune }) {
+  const size = item?.briefThumbnailSize || 'small';
+  if (size === 'main') return <MainFocusMediaCard item={item} onTune={onTune} />;
+  return <SmallMediaCard item={item} onTune={onTune} />;
+}
+
 export function BuildStatusCard({ item, mode = 'updates' }) {
   const brief = mode === 'brief';
   return (
     <Panel style={styles.buildPanel}>
       <View style={styles.buildBody}>
-        <Image source={getThumbSource(item)} resizeMode="cover" style={styles.buildThumb} />
+        <View style={styles.buildThumbFrame}>
+          <Image source={getThumbSource(item)} resizeMode={item?.thumbnailResizeMode || 'cover'} style={styles.thumbImage} />
+        </View>
+
         <View style={styles.buildText}>
           <View style={styles.buildTopLine}>
             <Text allowFontScaling={false} style={styles.buildLabel} numberOfLines={1}>
@@ -144,7 +176,9 @@ export function TuneSheet({ item, visible, onClose }) {
         </Text>
 
         <View style={styles.previewRow}>
-          <Image source={getCardThumbSource(item)} resizeMode="cover" style={styles.previewThumb} />
+          <View style={styles.previewThumbFrame}>
+            <Thumb item={item} />
+          </View>
           <View style={styles.previewCopy}>
             <Text allowFontScaling={false} style={styles.youtubeLabel} numberOfLines={1}>{item.label || 'YOUTUBE'}</Text>
             <Text allowFontScaling={false} style={styles.previewTitle} numberOfLines={2}>{item.title}</Text>
@@ -180,54 +214,46 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
 
-  mediaPanel: {
+  mainMediaPanel: {
     padding: 16,
   },
-
-  updatesThumbFrame: {
+  mainThumbFrame: {
     width: '100%',
-    aspectRatio: 2.28,
-    borderRadius: 21,
+    borderRadius: 22,
     borderWidth: 1,
     borderColor: colors.lineStrong,
     backgroundColor: '#07111D',
     overflow: 'hidden',
   },
-  thumbImage: {
-    width: '100%',
-    height: '100%',
-  },
-  updatesInfoRow: {
+  mainInfoRow: {
     flexDirection: 'row',
     gap: 16,
     alignItems: 'center',
     paddingTop: 14,
     minHeight: 96,
   },
-  updatesMetaCol: {
+  mainMetaCol: {
     width: 112,
     gap: 11,
     minWidth: 0,
   },
-  copyCol: {
-    flex: 1,
-    minWidth: 0,
-    justifyContent: 'center',
-  },
 
-  sideBySideBody: {
+  smallMediaPanel: {
+    padding: 16,
+  },
+  smallBody: {
     flexDirection: 'row',
     gap: 15,
     alignItems: 'center',
     minHeight: 162,
   },
-  sideTextCol: {
+  smallTextCol: {
     flex: 1,
     minWidth: 0,
     gap: 8,
     justifyContent: 'center',
   },
-  sideThumbFrame: {
+  smallThumbFrame: {
     width: '46%',
     aspectRatio: 16 / 9,
     flexShrink: 0,
@@ -236,6 +262,16 @@ const styles = StyleSheet.create({
     borderColor: colors.lineStrong,
     backgroundColor: '#07111D',
     overflow: 'hidden',
+  },
+
+  thumbImage: {
+    width: '100%',
+    height: '100%',
+  },
+  copyCol: {
+    flex: 1,
+    minWidth: 0,
+    justifyContent: 'center',
   },
 
   youtubeLabel: {
@@ -296,7 +332,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     minHeight: 102,
   },
-  buildThumb: {
+  buildThumbFrame: {
     width: '43%',
     aspectRatio: 16 / 9,
     borderRadius: 17,
@@ -304,6 +340,7 @@ const styles = StyleSheet.create({
     borderColor: colors.lineStrong,
     backgroundColor: '#07111D',
     flexShrink: 0,
+    overflow: 'hidden',
   },
   buildText: {
     flex: 1,
@@ -373,7 +410,7 @@ const styles = StyleSheet.create({
     gap: 14,
     marginBottom: 20,
   },
-  previewThumb: { width: 136, aspectRatio: 16 / 9, borderRadius: 16, backgroundColor: '#07111D' },
+  previewThumbFrame: { width: 136, aspectRatio: 16 / 9, borderRadius: 16, backgroundColor: '#07111D', overflow: 'hidden' },
   previewCopy: { flex: 1, minWidth: 0, paddingRight: 2 },
   previewTitle: { color: colors.text, fontSize: 17, lineHeight: 22, fontWeight: '900', marginTop: 7, includeFontPadding: false },
   previewDesc: { color: colors.muted, fontSize: 13.5, lineHeight: 18, marginTop: 7, includeFontPadding: false },

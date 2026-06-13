@@ -48,14 +48,21 @@
     "category": "Productivity",
     "saved": true,
     "thumbnailKey": "ticketTracker",
-    "thumbnailUrl": ""
+    "thumbnailUrl": "",
+    "thumbnailSize": "main",
+    "briefThumbnailSize": "small",
+    "memoryThumbnailSize": "small",
+    "thumbnailResizeMode": "cover",
+    "thumbnailAspectRatio": 1.777
   },
   "buildStatus": {
     "id": "android-dev-build",
     "label": "BUILD STATUS",
     "title": "Android dev build queue",
     "description": "No action needed. Keep reviewing visuals before touching the build.",
-    "thumbnailKey": "buildQueue"
+    "thumbnailKey": "buildQueue",
+    "thumbnailSize": "small",
+    "thumbnailResizeMode": "cover"
   },
   "plan": {
     "title": "Today\u2019s plan",
@@ -85,7 +92,8 @@
   },
   "updates": [
     {
-      "ref": "featured"
+      "ref": "featured",
+      "thumbnailSize": "main"
     },
     {
       "ref": "buildStatus"

@@ -2,7 +2,7 @@ import React from 'react';
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import AssetIcon from '../components/AssetIcon';
 import AppShell from '../components/AppShell';
-import { getThumbSource, Panel } from '../components/Cards';
+import { getCardThumbSource, getThumbSource, Panel } from '../components/Cards';
 import { thumbnails } from '../data/assets';
 import { colors } from '../theme/tokens';
 
@@ -13,9 +13,7 @@ const prefColors = {
 };
 
 function getMemoryThumbSource(item) {
-  if (item?.thumbnailUrl) return { uri: item.thumbnailUrl };
-  if (item?.thumbnailKey === 'ticketTracker' && thumbnails.ticketTrackerCard) return thumbnails.ticketTrackerCard;
-  return getThumbSource(item);
+  return getCardThumbSource(item);
 }
 
 export default function MemoryScreen({ activeTab = 'Memory', onNavigate, pack }) {
@@ -108,8 +106,8 @@ const styles = StyleSheet.create({
   sectionAction: { color: colors.blue, fontSize: 16.5, lineHeight: 22, fontWeight: '800' },
 
   savedCard: { padding: 14 },
-  savedTopRow: { flexDirection: 'row', gap: 14, alignItems: 'flex-start', minHeight: 112 },
-  savedThumb: { width: '47%', aspectRatio: 16 / 9, borderRadius: 17, borderWidth: 1, borderColor: colors.lineStrong, backgroundColor: '#07111D' },
+  savedTopRow: { flexDirection: 'row', gap: 14, alignItems: 'center', minHeight: 112 },
+  savedThumb: { width: '46%', aspectRatio: 16 / 9, borderRadius: 17, borderWidth: 1, borderColor: colors.lineStrong, backgroundColor: '#07111D' },
   savedCopy: { flex: 1, minWidth: 0, paddingRight: 46 },
   youtube: { color: colors.coral, fontSize: 12.5, lineHeight: 16, fontWeight: '900', letterSpacing: .5 },
   savedTitle: { color: colors.text, fontSize: 19.5, lineHeight: 24, fontWeight: '900', marginTop: 8 },

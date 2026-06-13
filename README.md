@@ -160,3 +160,18 @@ Unchanged:
 - App shell/header/nav
 - Bottom nav
 - Button component styling
+
+
+## v1.26 thumbnail card system
+
+This pass fixes thumbnail cards by making them data-driven instead of guessing layout from one placeholder image.
+
+Use these fields in the daily pack:
+- `thumbnailUrl`: actual remote thumbnail URL, e.g. a YouTube video thumbnail.
+- `thumbnailSize`: `"main"` or `"small"`.
+- `briefThumbnailSize`: optional override for Brief.
+- `memoryThumbnailSize`: optional override for Memory saved items.
+- `thumbnailAspectRatio`: optional, default 1.777.
+- `thumbnailResizeMode`: `"cover"` by default, `"contain"` when needed.
+
+See `THUMBNAIL_CARD_DATA.md`.
