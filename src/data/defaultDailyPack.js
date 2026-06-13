@@ -53,7 +53,7 @@ export const defaultDailyPack = {
     "briefThumbnailSize": "small",
     "memoryThumbnailSize": "small",
     "thumbnailResizeMode": "cover",
-    "thumbnailAspectRatio": 1.777,
+    "thumbnailAspectRatio": 2.05,
     "cardStyle": "main",
     "briefCardStyle": "compact",
     "memoryCardStyle": "saved"

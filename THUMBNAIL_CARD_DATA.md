@@ -118,3 +118,23 @@ Default is `cover`. Use `contain` only when cropping would ruin the thumbnail:
 ```json
 "thumbnailResizeMode": "contain"
 ```
+
+
+## v1.28 fit notes
+
+The app now treats thumbnail cards as dense card compositions:
+- `main` cards use a wide/short thumbnail band to avoid huge dead space.
+- `compact` cards use a larger right-side thumbnail while keeping text readable.
+- Build status cards use a bigger thumbnail and shorter action buttons.
+- Memory saved cards use a bigger left thumbnail and a smaller bookmark button inside the label row.
+
+Recommended defaults:
+```json
+{
+  "cardStyle": "main",
+  "briefCardStyle": "compact",
+  "memoryCardStyle": "saved",
+  "thumbnailAspectRatio": 2.05,
+  "thumbnailResizeMode": "cover"
+}
+```

@@ -20,6 +20,13 @@ function resizeMode(item) {
   return item?.thumbnailResizeMode || 'cover';
 }
 
+function mainAspectRatio(item) {
+  const value = Number(item?.thumbnailAspectRatio);
+  // Main focus cards must stay wide/short enough on real devices.
+  // Imported data can make it wider, but not taller than this.
+  return Math.max(value || 2.05, 1.98);
+}
+
 export function Panel({ children, style }) {
   return <View style={[styles.panel, style]}>{children}</View>;
 }
@@ -47,9 +54,9 @@ function PressableThumbFrame({ item, onTune, style }) {
 function ActionRow({ primaryLabel = 'Open item' }) {
   return (
     <View style={styles.actionRow}>
-      <PillButton label="Save" icon="bookmark" style={styles.secondaryAction} />
-      <PillButton label="Hide" icon="hide" style={styles.secondaryAction} />
-      <PillButton label={primaryLabel} icon="play" primary style={styles.primaryAction} />
+      <PillButton label="Save" icon="bookmark" style={[styles.cardButton, styles.secondaryAction]} />
+      <PillButton label="Hide" icon="hide" style={[styles.cardButton, styles.secondaryAction]} />
+      <PillButton label={primaryLabel} icon="play" primary style={[styles.cardButton, styles.primaryAction]} />
     </View>
   );
 }
@@ -62,7 +69,7 @@ function MetaStack({ item, duration = true }) {
       </Text>
       {duration ? (
         <View style={styles.timeRow}>
-          <AssetIcon name="clock" size={21} color={colors.muted} />
+          <AssetIcon name="clock" size={20} color={colors.muted} />
           <MetaPill label={item.duration || '10 min'} style={styles.timePill} />
         </View>
       ) : null}
@@ -71,11 +78,9 @@ function MetaStack({ item, duration = true }) {
 }
 
 function MainFocusCard({ item, onTune }) {
-  const aspectRatio = Number(item?.thumbnailAspectRatio) || 16 / 9;
-
   return (
     <Panel style={styles.mainCard}>
-      <PressableThumbFrame item={item} onTune={onTune} style={[styles.mainThumb, { aspectRatio }]} />
+      <PressableThumbFrame item={item} onTune={onTune} style={[styles.mainThumb, { aspectRatio: mainAspectRatio(item) }]} />
 
       <View style={styles.mainContentGrid}>
         <MetaStack item={item} />
@@ -109,7 +114,7 @@ function CompactFocusCard({ item, onTune }) {
             {item.description}
           </Text>
           <View style={styles.timeRow}>
-            <AssetIcon name="clock" size={21} color={colors.muted} />
+            <AssetIcon name="clock" size={20} color={colors.muted} />
             <MetaPill label={item.duration || '10 min'} style={styles.timePill} />
           </View>
         </View>
@@ -158,8 +163,8 @@ export function BuildStatusCard({ item, mode = 'updates' }) {
       </View>
 
       <View style={styles.twoActions}>
-        <PillButton label={brief ? 'View progress' : 'Save'} icon={brief ? 'trend' : 'bookmark'} style={styles.fullAction} />
-        <PillButton label={brief ? 'See details' : 'Hide'} icon={brief ? 'eye' : 'hide'} style={styles.fullAction} />
+        <PillButton label={brief ? 'View progress' : 'Save'} icon={brief ? 'trend' : 'bookmark'} style={[styles.cardButton, styles.fullAction]} />
+        <PillButton label={brief ? 'See details' : 'Hide'} icon={brief ? 'eye' : 'hide'} style={[styles.cardButton, styles.fullAction]} />
       </View>
     </Panel>
   );
@@ -197,8 +202,8 @@ export function TuneSheet({ item, visible, onClose }) {
         <View style={styles.reason}><Text allowFontScaling={false} style={styles.reasonText}>Optional reason</Text></View>
 
         <View style={styles.twoActions}>
-          <PillButton label="Cancel" onPress={onClose} style={styles.fullAction} />
-          <PillButton label="Remember" primary onPress={onClose} style={styles.fullAction} />
+          <PillButton label="Cancel" onPress={onClose} style={[styles.cardButton, styles.fullAction]} />
+          <PillButton label="Remember" primary onPress={onClose} style={[styles.cardButton, styles.fullAction]} />
         </View>
       </View>
     </View>
@@ -227,18 +232,18 @@ const styles = StyleSheet.create({
   },
 
   mainCard: {
-    padding: 16,
+    padding: 14,
   },
   mainThumb: {
     width: '100%',
-    borderRadius: 22,
+    borderRadius: 21,
   },
   mainContentGrid: {
     flexDirection: 'row',
-    gap: 18,
+    gap: 14,
     alignItems: 'center',
-    paddingTop: 16,
-    minHeight: 104,
+    paddingTop: 12,
+    minHeight: 84,
   },
   mainCopy: {
     flex: 1,
@@ -246,95 +251,103 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   metaStack: {
-    width: 112,
+    width: 102,
     minWidth: 0,
-    gap: 11,
+    gap: 10,
   },
 
   compactCard: {
-    padding: 16,
+    padding: 14,
   },
   compactTop: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
-    minHeight: 172,
+    gap: 13,
+    minHeight: 148,
   },
   compactCopy: {
     flex: 1,
     minWidth: 0,
-    gap: 8,
+    gap: 7,
     justifyContent: 'center',
   },
   compactThumb: {
-    width: '50%',
+    width: '54%',
     aspectRatio: 16 / 9,
-    borderRadius: 20,
+    borderRadius: 19,
     flexShrink: 0,
   },
 
   label: {
     color: colors.coral,
-    fontSize: 12.5,
-    lineHeight: 16,
+    fontSize: 12.2,
+    lineHeight: 15.5,
     fontWeight: '900',
     letterSpacing: .35,
     includeFontPadding: false,
   },
   title: {
     color: colors.text,
-    fontSize: 18.8,
-    lineHeight: 23.5,
+    fontSize: 17.8,
+    lineHeight: 22.5,
     fontWeight: '900',
     includeFontPadding: false,
   },
   description: {
     color: colors.muted,
-    fontSize: 14.2,
-    lineHeight: 20,
+    fontSize: 13.6,
+    lineHeight: 19,
     includeFontPadding: false,
   },
   timeRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 7,
   },
   timePill: {
     alignSelf: 'flex-start',
-    paddingLeft: 8,
+    minHeight: 36,
+    paddingVertical: 8,
+    paddingHorizontal: 11,
+    fontSize: 14,
   },
 
   actionRow: {
-    minHeight: 60,
+    minHeight: 52,
     flexDirection: 'row',
-    gap: 12,
-    paddingTop: 16,
-    paddingHorizontal: 8,
+    gap: 10,
+    paddingTop: 13,
+    paddingHorizontal: 7,
   },
   twoActions: {
-    minHeight: 60,
+    minHeight: 52,
     flexDirection: 'row',
-    gap: 12,
-    paddingTop: 16,
-    paddingHorizontal: 8,
+    gap: 10,
+    paddingTop: 13,
+    paddingHorizontal: 7,
   },
-  secondaryAction: { flex: 1.08, minWidth: 0 },
-  primaryAction: { flex: 2.08, minWidth: 0 },
+  cardButton: {
+    minHeight: 54,
+    borderRadius: 19,
+    paddingHorizontal: 10,
+  },
+  secondaryAction: { flex: 1.06, minWidth: 0 },
+  primaryAction: { flex: 2.05, minWidth: 0 },
   fullAction: { flex: 1, minWidth: 0 },
 
   buildCard: {
-    padding: 16,
+    padding: 14,
   },
   buildTop: {
     flexDirection: 'row',
-    gap: 18,
+    gap: 15,
     alignItems: 'center',
-    minHeight: 122,
+    minHeight: 110,
   },
   buildThumb: {
-    width: '46%',
+    width: '49%',
     aspectRatio: 16 / 9,
-    borderRadius: 19,
+    borderRadius: 18,
     flexShrink: 0,
   },
   buildCopy: {
@@ -345,12 +358,12 @@ const styles = StyleSheet.create({
   buildLabelRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: 8,
   },
   buildLabel: {
     color: colors.gold,
-    fontSize: 12.8,
-    lineHeight: 16,
+    fontSize: 12.5,
+    lineHeight: 15.5,
     fontWeight: '900',
     letterSpacing: .3,
     includeFontPadding: false,
@@ -358,23 +371,23 @@ const styles = StyleSheet.create({
   },
   more: {
     color: colors.muted,
-    fontSize: 19,
+    fontSize: 18,
     fontWeight: '900',
     letterSpacing: 2,
   },
   buildTitle: {
     color: colors.text,
-    fontSize: 18.8,
-    lineHeight: 24,
+    fontSize: 17.8,
+    lineHeight: 22.5,
     fontWeight: '900',
-    marginTop: 9,
+    marginTop: 8,
     includeFontPadding: false,
   },
   buildDescription: {
     color: colors.muted,
-    fontSize: 14.2,
-    lineHeight: 20,
-    marginTop: 7,
+    fontSize: 13.6,
+    lineHeight: 19,
+    marginTop: 6,
     includeFontPadding: false,
   },
 
@@ -394,21 +407,21 @@ const styles = StyleSheet.create({
   sheetTitle: { color: colors.text, fontSize: 34, lineHeight: 40, fontWeight: '900', includeFontPadding: false },
   sheetCopy: { color: colors.muted, fontSize: 15.5, lineHeight: 23, marginTop: 12, marginBottom: 22 },
   previewRow: {
-    minHeight: 138,
+    minHeight: 128,
     borderRadius: 23,
     borderWidth: 1,
     borderColor: colors.line,
     backgroundColor: 'rgba(16, 30, 48, .82)',
-    padding: 14,
+    padding: 13,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 14,
+    gap: 13,
     marginBottom: 20,
   },
-  previewThumb: { width: 136, aspectRatio: 16 / 9, borderRadius: 16 },
+  previewThumb: { width: 142, aspectRatio: 16 / 9, borderRadius: 16 },
   previewCopy: { flex: 1, minWidth: 0, paddingRight: 2 },
-  previewTitle: { color: colors.text, fontSize: 17, lineHeight: 22, fontWeight: '900', marginTop: 7 },
-  previewDesc: { color: colors.muted, fontSize: 13.5, lineHeight: 18, marginTop: 7 },
+  previewTitle: { color: colors.text, fontSize: 16.5, lineHeight: 21, fontWeight: '900', marginTop: 7 },
+  previewDesc: { color: colors.muted, fontSize: 13.2, lineHeight: 17.5, marginTop: 7 },
   optionGrid: { minHeight: 184, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', rowGap: 14, marginBottom: 18 },
   optionButton: { width: '47.2%', minWidth: 0 },
   optionButtonAccent: { width: '47.2%', borderColor: colors.teal, minWidth: 0 },

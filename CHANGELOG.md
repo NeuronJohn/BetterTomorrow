@@ -196,3 +196,13 @@
 - Larger thumbnails, less dead space, and cleaner text placement inside thumbnail cards.
 - Memory saved thumbnail card now has its own layout: bigger thumbnail, bookmark in a label row, no title overlap.
 - Updated daily pack template and THUMBNAIL_CARD_DATA.md with exact JSON options.
+
+
+# v1.28 thumbnail card fit pass
+
+- Focused only on cards that contain thumbnails.
+- Reduced dead space in main/compact/build thumbnail cards.
+- Made thumbnails larger where they were floating too small, but kept them bounded inside the card.
+- Shortened card action buttons inside thumbnail cards without changing the global Button component.
+- Main focus thumbnails now clamp to a wider/shorter aspect ratio so old imported 16:9 data does not create a too-tall card.
+- Memory saved card thumbnail is larger and the bookmark is smaller inside the label row.

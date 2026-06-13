@@ -186,3 +186,14 @@ Cards with thumbnails now have tab-aware styles:
 - Secondary update cards: `cardStyle: "compact"`
 
 Use actual video thumbnails via `thumbnailUrl`. See `THUMBNAIL_CARD_DATA.md`.
+
+
+## v1.28 thumbnail card fit pass
+
+This pass focuses only on cards with thumbnails:
+- Updates main card
+- Brief compact card
+- Build status card
+- Memory saved card
+
+It keeps the app-wide nav/header/button system intact and makes the card compositions denser, with bigger thumbnails and less dead space.

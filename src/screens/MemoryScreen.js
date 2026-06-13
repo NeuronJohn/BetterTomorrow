@@ -37,7 +37,7 @@ export default function MemoryScreen({ activeTab = 'Memory', onNavigate, pack })
             <View style={styles.savedLabelRow}>
               <Text allowFontScaling={false} style={styles.youtube} numberOfLines={1}>{savedItem.label || 'YOUTUBE'}</Text>
               <Pressable style={styles.activeBookmark} onPress={() => {}}>
-                <AssetIcon name="bookmark" size={25} color={colors.teal} />
+                <AssetIcon name="bookmark" size={24} color={colors.teal} />
               </Pressable>
             </View>
 
@@ -109,17 +109,17 @@ const styles = StyleSheet.create({
   sectionTitle: { color: colors.text, fontSize: 23, lineHeight: 29, fontWeight: '900', flex: 1 },
   sectionAction: { color: colors.blue, fontSize: 16.5, lineHeight: 22, fontWeight: '800' },
 
-  savedCard: { padding: 16 },
-  savedTopRow: { flexDirection: 'row', gap: 16, alignItems: 'center', minHeight: 130 },
-  savedThumb: { width: '50%', aspectRatio: 16 / 9, borderRadius: 19, borderWidth: 1, borderColor: colors.lineStrong, backgroundColor: '#07111D' },
+  savedCard: { padding: 14 },
+  savedTopRow: { flexDirection: 'row', gap: 13, alignItems: 'center', minHeight: 118 },
+  savedThumb: { width: '52%', aspectRatio: 16 / 9, borderRadius: 18, borderWidth: 1, borderColor: colors.lineStrong, backgroundColor: '#07111D' },
   savedCopy: { flex: 1, minWidth: 0, justifyContent: 'center' },
-  youtube: { color: colors.coral, fontSize: 12.5, lineHeight: 16, fontWeight: '900', letterSpacing: .5, flex: 1, minWidth: 0 },
-  savedTitle: { color: colors.text, fontSize: 18.8, lineHeight: 23.5, fontWeight: '900', marginTop: 8 },
-  savedDesc: { color: colors.muted, fontSize: 14.2, lineHeight: 20, marginTop: 8 },
+  youtube: { color: colors.coral, fontSize: 12.2, lineHeight: 15.5, fontWeight: '900', letterSpacing: .5, flex: 1, minWidth: 0 },
+  savedTitle: { color: colors.text, fontSize: 17.8, lineHeight: 22.5, fontWeight: '900', marginTop: 7 },
+  savedDesc: { color: colors.muted, fontSize: 13.6, lineHeight: 19, marginTop: 7 },
   savedLabelRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   activeBookmark: {
-    width: 42,
-    height: 42,
+    width: 38,
+    height: 38,
     borderRadius: 14,
     borderWidth: 1,
     borderColor: colors.teal,
@@ -128,10 +128,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexShrink: 0,
   },
-  savedMetaRow: { flexDirection: 'row', alignItems: 'center', gap: 16, marginTop: 16, paddingTop: 12, borderTopWidth: 1, borderTopColor: colors.line },
+  savedMetaRow: { flexDirection: 'row', alignItems: 'center', gap: 14, marginTop: 13, paddingTop: 11, borderTopWidth: 1, borderTopColor: colors.line },
   metaPair: { flexDirection: 'row', alignItems: 'center', gap: 7 },
-  metaText: { color: colors.muted, fontSize: 14.5, lineHeight: 18, fontWeight: '800' },
-  savedStatus: { color: colors.teal, fontSize: 15, lineHeight: 19, fontWeight: '900', marginLeft: 'auto' },
+  metaText: { color: colors.muted, fontSize: 14, lineHeight: 18, fontWeight: '800' },
+  savedStatus: { color: colors.teal, fontSize: 14.5, lineHeight: 18, fontWeight: '900', marginLeft: 'auto' },
 
   prefGrid: { gap: 10, paddingRight: 20, marginBottom: 14 },
   prefCard: { width: 132, minHeight: 112, padding: 12 },
