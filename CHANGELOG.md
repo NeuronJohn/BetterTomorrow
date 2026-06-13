@@ -133,3 +133,12 @@
 - Build thumbnail is fixed to a compact frame.
 - Action rows now have inner horizontal padding so buttons do not touch card edges.
 - Restored Remembered preferences to horizontal scrolling cards.
+
+
+# v1.21 reference-match pass
+
+- Fixed the import button: it now scrolls with the Brief header instead of floating over cards.
+- Replaced the hard-tiny thumbnail lock with a responsive thumbnail: large enough like the good reference, but bounded so it cannot become a giant image.
+- Brief and Updates share the same card geometry so they feel identical.
+- Action buttons keep the good compact look and have inner row padding.
+- Remembered preferences remain a horizontal sideways scroller with readable card text.

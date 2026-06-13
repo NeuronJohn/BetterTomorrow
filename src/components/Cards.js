@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { thumbnails } from '../data/assets';
 import { colors } from '../theme/tokens';
 import AssetIcon from './AssetIcon';
@@ -20,6 +20,12 @@ export function Panel({ children, style }) {
 }
 
 function VideoCardContent({ item, onTune }) {
+  const { width } = useWindowDimensions();
+
+  // Matches the good reference: right-side thumbnail is substantial,
+  // but it cannot become the giant top hero image on S24/Pixel.
+  const thumbWidth = Math.min(Math.max(width * 0.48, 190), 238);
+
   return (
     <>
       <View style={styles.videoBody}>
@@ -39,7 +45,11 @@ function VideoCardContent({ item, onTune }) {
           </View>
         </View>
 
-        <Pressable onLongPress={() => onTune?.(item)} delayLongPress={450} style={styles.videoThumbFrame}>
+        <Pressable
+          onLongPress={() => onTune?.(item)}
+          delayLongPress={450}
+          style={[styles.videoThumbFrame, { width: thumbWidth }]}
+        >
           <Image source={getCardThumbSource(item)} resizeMode="cover" style={styles.videoThumb} />
         </Pressable>
       </View>
@@ -148,12 +158,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 16,
-    minHeight: 160,
+    minHeight: 184,
   },
   videoTextCol: {
     flex: 1,
     minWidth: 0,
-    gap: 8,
+    gap: 9,
     justifyContent: 'center',
   },
   youtubeLabel: {
@@ -178,19 +188,15 @@ const styles = StyleSheet.create({
     includeFontPadding: false,
   },
   videoThumbFrame: {
-    width: 156,
-    height: 88,
     flexShrink: 0,
+    aspectRatio: 16 / 9,
     borderRadius: 18,
     borderWidth: 1,
     borderColor: colors.lineStrong,
     backgroundColor: '#07111D',
     overflow: 'hidden',
   },
-  videoThumb: {
-    width: '100%',
-    height: '100%',
-  },
+  videoThumb: { width: '100%', height: '100%' },
   timeRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   timePill: { alignSelf: 'flex-start', paddingLeft: 8 },
 

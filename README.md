@@ -110,3 +110,14 @@ The thumbnail issue is fixed at the layout level:
 - Action buttons have dedicated padding inside the card.
 
 Remembered preferences are back to horizontal scroll.
+
+
+## v1.21 reference-match pass
+
+This pass dissects the difference between the desired phone screenshots and the broken phone render:
+- Broken: thumbnail either becomes a giant hero image or gets hard-locked too small.
+- Fixed: thumbnail width is responsive and bounded using device width.
+- Broken: import button was fixed absolute and appeared over cards while scrolling.
+- Fixed: import button is now part of the Brief header and scrolls naturally.
+- Broken: preferences either squeezed or oversized.
+- Fixed: preferences are a horizontal scroller again.

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Platform, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import AssetIcon from '../components/AssetIcon';
 import AppShell from '../components/AppShell';
 import { BriefFeatureCard, BuildStatusCard, Panel, TuneSheet } from '../components/Cards';
@@ -18,6 +18,14 @@ export default function BriefScreen({ activeTab = 'Brief', onNavigate, pack, imp
         onNavigate={onNavigate}
         title={pack.brief.title || 'Brief'}
         subtitle={pack.brief.subtitle || 'Your morning snapshot. Focus on what moves the needle today.'}
+        headerRight={
+          <PillButton
+            label="Import pack"
+            icon="import"
+            onPress={() => setImportOpen(true)}
+            style={styles.importButton}
+          />
+        }
       >
         <Panel style={styles.morningCard}>
           <View style={styles.morningTop}>
@@ -38,15 +46,6 @@ export default function BriefScreen({ activeTab = 'Brief', onNavigate, pack, imp
         <BriefFeatureCard item={pack.featured} onTune={setTuneItem} />
         <BuildStatusCard item={pack.buildStatus} mode="brief" />
       </AppShell>
-
-      <View pointerEvents="box-none" style={styles.importOverlay}>
-        <PillButton
-          label="Import pack"
-          icon="import"
-          onPress={() => setImportOpen(true)}
-          style={styles.importButton}
-        />
-      </View>
 
       <TuneSheet item={tuneItem} visible={!!tuneItem} onClose={() => setTuneItem(null)} />
       <ImportDailyPackModal
@@ -72,28 +71,11 @@ function DirectionRow({ icon, title, copy }) {
 }
 
 const styles = StyleSheet.create({
-  importOverlay: {
-    position: 'absolute',
-    top: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + 36 : 64,
-    right: 20,
-    zIndex: 90,
-    elevation: 90,
-  },
   importButton: {
     minWidth: 216,
     minHeight: 54,
     paddingHorizontal: 22,
     borderRadius: 22,
-  },
-  morningCard: { padding: 20 },
-  morningTop: { flexDirection: 'row', alignItems: 'center', gap: 16 },
-  sunIcon: {
-    width: 66,
-    height: 66,
-    borderRadius: 33,
-    backgroundColor: 'rgba(16, 45, 55, .8)',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   greeting: { color: colors.text, fontSize: 23, fontWeight: '900' },
   date: { color: colors.muted, fontSize: 16, marginTop: 6 },
