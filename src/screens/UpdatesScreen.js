@@ -3,34 +3,32 @@ import { View } from 'react-native';
 import AppShell from '../components/AppShell';
 import { BuildStatusCard, TuneSheet, UpdatesFeatureCard } from '../components/Cards';
 
-function resolveUpdate(entry, pack) {
+function itemId(item) { return item?.id || item?.ref || item?.title || item?.label || 'card'; }
+function withSaved(item, savedIds) { const id = itemId(item); return { ...item, saved: item.saved || savedIds.includes(id) }; }
+function resolveUpdate(entry, pack, savedIds = []) {
   if (!entry) return null;
-  if (entry.ref === 'featured') return { ...pack.featured, ...entry };
+  if (entry.ref === 'featured') return withSaved({ ...pack.featured, ...entry }, savedIds);
   if (entry.ref === 'buildStatus') return { ...pack.buildStatus, ...entry, cardType: 'buildStatus' };
-  return entry;
+  return withSaved(entry, savedIds);
 }
 
-export default function UpdatesScreen({ activeTab = 'Updates', onNavigate, pack }) {
+export default function UpdatesScreen({ activeTab = 'Updates', onNavigate, pack, hiddenIds = [], savedIds = [], onCardAction }) {
   const [tuneItem, setTuneItem] = useState(null);
   const updateItems = (pack.updates || [{ ref: 'featured' }, { ref: 'buildStatus' }])
-    .map((entry) => resolveUpdate(entry, pack))
-    .filter(Boolean);
+    .map((entry) => resolveUpdate(entry, pack, savedIds))
+    .filter(Boolean)
+    .filter((item) => !hiddenIds.includes(itemId(item)));
 
   return (
     <View style={{ flex: 1 }}>
-      <AppShell
-        activeTab={activeTab}
-        onNavigate={onNavigate}
-        title="Updates"
-        subtitle="Only useful stuff: videos, build notes, and saved interests that fit your goals."
-      >
+      <AppShell activeTab={activeTab} onNavigate={onNavigate} title="Updates" subtitle="Only useful stuff: videos, build notes, and saved interests that fit your goals.">
         {updateItems.map((item, index) => (
           item.cardType === 'buildStatus'
-            ? <BuildStatusCard key={item.id || item.ref || index} item={item} />
-            : <UpdatesFeatureCard key={item.id || item.ref || index} item={item} onTune={setTuneItem} />
+            ? <BuildStatusCard key={item.id || item.ref || index} item={item} onAction={onCardAction} />
+            : <UpdatesFeatureCard key={item.id || item.ref || index} item={item} onTune={setTuneItem} onAction={onCardAction} />
         ))}
       </AppShell>
-      <TuneSheet item={tuneItem} visible={!!tuneItem} onClose={() => setTuneItem(null)} />
+      <TuneSheet item={tuneItem} visible={!!tuneItem} onClose={() => setTuneItem(null)} onAction={onCardAction} />
     </View>
   );
 }

@@ -3,13 +3,13 @@ import { Pressable, StyleSheet, Text } from 'react-native';
 import AssetIcon from './AssetIcon';
 import { colors } from '../theme/tokens';
 
-export function PillButton({ label, icon, primary = false, style, onPress }) {
-  const tint = primary ? '#061014' : colors.muted;
+export function PillButton({ label, icon, primary = false, accentText = false, style, onPress }) {
+  const tint = primary ? '#061014' : accentText ? colors.teal : colors.muted;
   return (
     <Pressable onPress={onPress} style={[styles.button, primary ? styles.primary : styles.secondary, style]}>
       {icon ? <AssetIcon name={icon} size={22} color={tint} style={styles.buttonIcon} /> : null}
       <Text
-        style={[styles.text, primary ? styles.primaryText : styles.secondaryText]}
+        style={[styles.text, primary ? styles.primaryText : accentText ? styles.accentText : styles.secondaryText]}
         numberOfLines={1}
         allowFontScaling={false}
         maxFontSizeMultiplier={1}
@@ -57,6 +57,7 @@ const styles = StyleSheet.create({
     flexShrink: 0,
   },
   secondaryText: { color: colors.muted },
+  accentText: { color: colors.teal },
   primaryText: { color: '#061014' },
   meta: {
     minHeight: 42,

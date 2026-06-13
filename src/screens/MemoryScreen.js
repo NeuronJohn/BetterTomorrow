@@ -3,7 +3,6 @@ import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-nati
 import AssetIcon from '../components/AssetIcon';
 import AppShell from '../components/AppShell';
 import { getCardThumbSource, getThumbSource, Panel } from '../components/Cards';
-import { thumbnails } from '../data/assets';
 import { colors } from '../theme/tokens';
 
 const prefColors = {
@@ -16,9 +15,16 @@ function getMemoryThumbSource(item) {
   return getCardThumbSource(item);
 }
 
-export default function MemoryScreen({ activeTab = 'Memory', onNavigate, pack }) {
-  const saved = pack.memory?.savedItems?.[0];
-  const savedItem = saved?.ref === 'featured' ? { ...pack.featured, ...saved } : pack.featured;
+function resolveSaved(saved, pack) {
+  if (!saved) return null;
+  if (saved.ref === 'featured') return { ...pack.featured, ...saved };
+  if (saved.ref === 'buildStatus') return { ...pack.buildStatus, ...saved };
+  return saved;
+}
+
+export default function MemoryScreen({ activeTab = 'Memory', onNavigate, pack, onCardAction }) {
+  const savedItems = (pack.memory?.savedItems || []).map((saved) => resolveSaved(saved, pack)).filter(Boolean);
+  const savedItem = savedItems[0];
   const note = pack.memory?.notes?.[0];
 
   return (
@@ -29,29 +35,36 @@ export default function MemoryScreen({ activeTab = 'Memory', onNavigate, pack })
       subtitle="Your saved items, preferences, and useful direction I’ll remember for you."
     >
       <SectionHeader title="Saved items" action="See all" />
-      <Panel style={styles.savedCard}>
-        <View style={styles.savedTopRow}>
-          <Image source={getMemoryThumbSource(savedItem)} resizeMode="cover" style={styles.savedThumb} />
+      {savedItem ? (
+        <Panel style={styles.savedCard}>
+          <View style={styles.savedTopRow}>
+            <Image source={getMemoryThumbSource(savedItem)} resizeMode="cover" style={styles.savedThumb} />
 
-          <View style={styles.savedCopy}>
-            <View style={styles.savedLabelRow}>
-              <Text allowFontScaling={false} style={styles.youtube} numberOfLines={1}>{savedItem.label || 'YOUTUBE'}</Text>
-              <Pressable style={styles.activeBookmark} onPress={() => {}}>
-                <AssetIcon name="bookmark" size={22} color={colors.teal} />
-              </Pressable>
+            <View style={styles.savedCopy}>
+              <View style={styles.savedLabelRow}>
+                <Text allowFontScaling={false} style={styles.youtube} numberOfLines={1}>{savedItem.label || 'YOUTUBE'}</Text>
+                <Pressable style={styles.activeBookmark} onPress={() => onCardAction?.('unsave', savedItem)}>
+                  <AssetIcon name="bookmark" size={22} color={colors.teal} />
+                </Pressable>
+              </View>
+
+              <Text allowFontScaling={false} style={styles.savedTitle} numberOfLines={3}>{savedItem.title}</Text>
+              <Text allowFontScaling={false} style={styles.savedDesc} numberOfLines={2}>Useful for today's skill sprint.</Text>
             </View>
-
-            <Text allowFontScaling={false} style={styles.savedTitle} numberOfLines={3}>{savedItem.title}</Text>
-            <Text allowFontScaling={false} style={styles.savedDesc} numberOfLines={2}>Useful for today’s skill sprint.</Text>
           </View>
-        </View>
 
-        <View style={styles.savedMetaRow}>
-          <View style={styles.metaPair}><AssetIcon name="clock" size={16} color={colors.muted} /><Text allowFontScaling={false} style={styles.metaText}>{savedItem.duration || '12 min'}</Text></View>
-          <View style={styles.metaPair}><AssetIcon name="tag" size={16} color={colors.muted} /><Text allowFontScaling={false} style={styles.metaText}>{savedItem.category || 'Productivity'}</Text></View>
-          <Text allowFontScaling={false} style={styles.savedStatus}>Saved ✓</Text>
-        </View>
-      </Panel>
+          <View style={styles.savedMetaRow}>
+            <View style={styles.metaPair}><AssetIcon name="clock" size={16} color={colors.muted} /><Text allowFontScaling={false} style={styles.metaText}>{savedItem.duration || '12 min'}</Text></View>
+            <View style={styles.metaPair}><AssetIcon name="tag" size={16} color={colors.muted} /><Text allowFontScaling={false} style={styles.metaText}>{savedItem.category || 'Productivity'}</Text></View>
+            <Text allowFontScaling={false} style={styles.savedStatus}>Saved ✓</Text>
+          </View>
+        </Panel>
+      ) : (
+        <Panel style={styles.emptySavedCard}>
+          <Text allowFontScaling={false} style={styles.emptySavedTitle}>No saved items yet</Text>
+          <Text allowFontScaling={false} style={styles.emptySavedCopy}>Save a useful update and it will land here.</Text>
+        </Panel>
+      )}
 
       <SectionHeader title="Remembered preferences" action="Manage" />
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.prefGrid}>
@@ -132,6 +145,10 @@ const styles = StyleSheet.create({
   metaPair: { flexDirection: 'row', alignItems: 'center', gap: 7 },
   metaText: { color: colors.muted, fontSize: 13.6, lineHeight: 17, fontWeight: '800' },
   savedStatus: { color: colors.teal, fontSize: 14, lineHeight: 17, fontWeight: '900', marginLeft: 'auto' },
+
+  emptySavedCard: { padding: 18 },
+  emptySavedTitle: { color: colors.text, fontSize: 18, lineHeight: 23, fontWeight: '900' },
+  emptySavedCopy: { color: colors.muted, fontSize: 14, lineHeight: 20, marginTop: 6 },
 
   prefGrid: { gap: 10, paddingRight: 20, marginBottom: 14 },
   prefCard: { width: 132, minHeight: 112, padding: 12 },

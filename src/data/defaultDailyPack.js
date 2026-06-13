@@ -1,6 +1,6 @@
 export const defaultDailyPack = {
-  "version": 1,
-  "date": "2026-06-12",
+  "version": 2,
+  "date": "2026-06-13",
   "notifications": {
     "morning": {
       "enabled": true,
@@ -19,7 +19,7 @@ export const defaultDailyPack = {
     "title": "Brief",
     "subtitle": "Your morning snapshot. Focus on what moves the needle today.",
     "greetingName": "Alex",
-    "dateLabel": "Thursday, May 23",
+    "dateLabel": "Saturday, June 13",
     "direction": [
       {
         "icon": "target",
@@ -39,16 +39,20 @@ export const defaultDailyPack = {
     ]
   },
   "featured": {
-    "id": "ticket-tracker-video",
+    "id": "expo-100-seconds",
     "type": "youtube",
     "label": "YOUTUBE",
-    "title": "Build a clean ticket tracker UI",
-    "description": "Use it as a fast AI-assisted project and commit the result today.",
-    "duration": "10 min",
-    "category": "Productivity",
+    "title": "Expo in 100 Seconds",
+    "description": "Use this quick Expo refresher before testing today's Android build.",
+    "duration": "2 min",
+    "category": "React Native",
     "saved": true,
     "thumbnailKey": "ticketTracker",
-    "thumbnailUrl": "",
+    "thumbnailUrl": "https://img.youtube.com/vi/vFW_TxKLyrE/hqdefault.jpg",
+    "url": "https://www.youtube.com/watch?v=vFW_TxKLyrE",
+    "videoUrl": "https://www.youtube.com/watch?v=vFW_TxKLyrE",
+    "openUrl": "https://www.youtube.com/watch?v=vFW_TxKLyrE",
+    "detailsUrl": "https://docs.expo.dev/",
     "thumbnailSize": "main",
     "briefThumbnailSize": "small",
     "memoryThumbnailSize": "small",
@@ -65,7 +69,9 @@ export const defaultDailyPack = {
     "description": "No action needed. Keep reviewing visuals before touching the build.",
     "thumbnailKey": "buildQueue",
     "thumbnailSize": "small",
-    "thumbnailResizeMode": "cover"
+    "thumbnailResizeMode": "cover",
+    "detailsUrl": "https://docs.expo.dev/build/introduction/",
+    "progressUrl": "https://expo.dev/accounts"
   },
   "plan": {
     "title": "Today\u2019s plan",
@@ -96,8 +102,8 @@ export const defaultDailyPack = {
   "updates": [
     {
       "ref": "featured",
-      "thumbnailSize": "main",
-      "cardStyle": "main"
+      "cardStyle": "main",
+      "thumbnailAspectRatio": 2.15
     },
     {
       "ref": "buildStatus"
@@ -108,8 +114,8 @@ export const defaultDailyPack = {
       {
         "ref": "featured",
         "savedAt": "Saved",
-        "duration": "12 min",
-        "category": "Productivity"
+        "duration": "2 min",
+        "category": "React Native"
       }
     ],
     "preferences": [
@@ -133,7 +139,7 @@ export const defaultDailyPack = {
       {
         "icon": "note",
         "title": "Why this matters",
-        "copy": "You like clean, practical outcomes and quick wins. Focus on ship-ready UI and real-world utility.",
+        "copy": "You saved a real Expo video task. Use it as a quick reference before testing today's build.",
         "date": "Saved May 10, 2025",
         "tag": "Context"
       }

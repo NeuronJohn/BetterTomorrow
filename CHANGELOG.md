@@ -216,3 +216,13 @@
 - Build status cards use a larger thumbnail and tighter local buttons.
 - Memory saved thumbnail card is denser, with a larger thumbnail and smaller bookmark.
 - No changes to Plan, AppShell, BottomNav, global Buttons, or Brief screen.
+
+
+# v1.30 functional cards
+
+- Added real YouTube video task data using the actual YouTube thumbnail URL.
+- Added `daily_pack_today.json` and `daily_pack_2026-06-13.json`.
+- Save, Hide, Open item, View progress, See details, and Memory unsave are wired through app state.
+- Hide removes cards for the current session. Save adds to Memory for the current session.
+- Brief tab build-status `View progress` and `See details` text/icons are teal only, with dark secondary backgrounds unchanged.
+- Thumbnail card spacing stays close to v1.29 while slightly improving real-data fit.

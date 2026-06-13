@@ -205,3 +205,16 @@ This pass makes the thumbnail-card change visually obvious:
 - Main cards no longer use the old lower two-column metadata layout.
 - Buttons are only locally tightened inside thumbnail cards.
 - Compact cards and saved cards use larger thumbnails with less dead space.
+
+
+## v1.30 functional cards
+
+This build includes a real preloaded daily pack and working card actions.
+
+Included pack files:
+- `daily_pack_today.json`
+- `daily_pack_2026-06-13.json`
+
+The featured task uses a real YouTube video and actual YouTube thumbnail URL for `Expo in 100 Seconds`. Save, Hide, Open item, View progress, See details, and Memory unsave now work from the preloaded/imported daily pack data.
+
+Requested color tweak: the Brief tab build-status buttons `View progress` and `See details` use the same teal as the Open item button for text/icons only.

@@ -7,9 +7,12 @@ import ImportDailyPackModal from '../components/ImportDailyPackModal';
 import { PillButton } from '../components/Buttons';
 import { colors } from '../theme/tokens';
 
-export default function BriefScreen({ activeTab = 'Brief', onNavigate, pack, importFromJson, importStatus }) {
+export default function BriefScreen({ activeTab = 'Brief', onNavigate, pack, importFromJson, importStatus, hiddenIds = [], savedIds = [], onCardAction }) {
   const [tuneItem, setTuneItem] = useState(null);
   const [importOpen, setImportOpen] = useState(false);
+  const featuredHidden = hiddenIds.includes(pack.featured?.id || pack.featured?.title);
+  const buildHidden = hiddenIds.includes(pack.buildStatus?.id || pack.buildStatus?.title);
+  const featuredForCard = { ...pack.featured, saved: pack.featured?.saved || savedIds.includes(pack.featured?.id || 'featured') };
 
   return (
     <View style={{ flex: 1 }}>
@@ -43,11 +46,11 @@ export default function BriefScreen({ activeTab = 'Brief', onNavigate, pack, imp
           ))}
         </Panel>
 
-        <BriefFeatureCard item={pack.featured} onTune={setTuneItem} />
-        <BuildStatusCard item={pack.buildStatus} mode="brief" />
+        {!featuredHidden ? <BriefFeatureCard item={featuredForCard} onTune={setTuneItem} onAction={onCardAction} /> : null}
+        {!buildHidden ? <BuildStatusCard item={pack.buildStatus} mode="brief" onAction={onCardAction} /> : null}
       </AppShell>
 
-      <TuneSheet item={tuneItem} visible={!!tuneItem} onClose={() => setTuneItem(null)} />
+      <TuneSheet item={tuneItem} visible={!!tuneItem} onClose={() => setTuneItem(null)} onAction={onCardAction} />
       <ImportDailyPackModal
         visible={importOpen}
         onClose={() => setImportOpen(false)}
