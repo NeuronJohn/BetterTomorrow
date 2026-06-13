@@ -97,3 +97,13 @@
 - Locked the Brief header text above the green background glow.
 - Added z-index/elevation guards so background glow layers stay behind content.
 - Kept the corrected `Import pack` button sizing from v1.13.
+
+
+# v1.15 phone-fit test
+
+- Disabled system font scaling globally for Text/TextInput to prevent Android display/font settings from breaking the UI proportions.
+- Added Android status-bar-aware top padding in AppShell.
+- Changed thumbnail images to contain inside their frames instead of cropping/zooming.
+- Rebuilt Memory screen saved card with normal flex layout instead of absolute overlays.
+- Rebuilt preference cards as horizontal cards so text no longer gets crushed into narrow columns on real phones.
+- Rebuilt note card with normal flex layout so it does not collide with the bottom nav.

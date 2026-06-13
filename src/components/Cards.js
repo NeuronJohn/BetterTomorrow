@@ -15,7 +15,7 @@ export function UpdatesFeatureCard({ item, onTune }) {
   return (
     <Panel style={styles.featurePanel}>
       <Pressable onLongPress={() => onTune?.(item)} delayLongPress={450}>
-        <Image source={getThumbSource(item)} resizeMode="cover" style={styles.featureThumb} />
+        <Image source={getThumbSource(item)} resizeMode="contain" style={styles.featureThumb} />
       </Pressable>
       <View style={styles.featureInfoRow}>
         <View style={styles.featureMetaCol}>
@@ -47,7 +47,7 @@ export function BriefFeatureCard({ item, onTune }) {
           <View style={styles.timeRow}><AssetIcon name="clock" size={24} color={colors.muted} /><MetaPill label={item.duration || '10 min'} style={styles.briefTimePill} /></View>
         </View>
         <Pressable onLongPress={() => onTune?.(item)} delayLongPress={450} style={styles.briefThumbWrap}>
-          <Image source={getThumbSource(item)} resizeMode="cover" style={styles.briefThumb} />
+          <Image source={getThumbSource(item)} resizeMode="contain" style={styles.briefThumb} />
         </Pressable>
       </View>
       <View style={styles.threeActions}>
@@ -64,7 +64,7 @@ export function BuildStatusCard({ item, mode = 'updates' }) {
   return (
     <Panel style={styles.buildPanel}>
       <View style={styles.buildBody}>
-        <Image source={getThumbSource(item)} resizeMode="cover" style={styles.buildThumb} />
+        <Image source={getThumbSource(item)} resizeMode="contain" style={styles.buildThumb} />
         <View style={styles.buildText}>
           <View style={styles.buildTopLine}><Text style={styles.buildLabel} numberOfLines={1}>{item.label || 'BUILD STATUS'}</Text><Text style={styles.more}>•••</Text></View>
           <Text style={styles.buildTitle} numberOfLines={2} adjustsFontSizeToFit minimumFontScale={0.78}>{item.title}</Text>
@@ -89,7 +89,7 @@ export function TuneSheet({ item, visible, onClose }) {
         <Text style={styles.sheetTitle}>Tune this</Text>
         <Text style={styles.sheetCopy}>Choose what should happen with this suggestion. Future mornings adjust from this.</Text>
         <View style={styles.previewRow}>
-          <Image source={getThumbSource(item)} resizeMode="cover" style={styles.previewThumb} />
+          <Image source={getThumbSource(item)} resizeMode="contain" style={styles.previewThumb} />
           <View style={styles.previewCopy}>
             <Text style={styles.youtubeLabel} numberOfLines={1}>{item.label || 'YOUTUBE'}</Text>
             <Text style={styles.previewTitle} numberOfLines={2} adjustsFontSizeToFit minimumFontScale={0.78}>{item.title}</Text>
@@ -115,7 +115,7 @@ export function TuneSheet({ item, visible, onClose }) {
 const styles = StyleSheet.create({
   panel: { borderRadius: 28, backgroundColor: 'rgba(13, 23, 37, .96)', borderWidth: 1, borderColor: colors.line, marginBottom: 18, overflow: 'hidden' },
   featurePanel: { padding: 22 },
-  featureThumb: { width: '100%', aspectRatio: 16 / 9, borderRadius: 22, borderWidth: 1, borderColor: colors.lineStrong },
+  featureThumb: { width: '100%', aspectRatio: 16 / 9, backgroundColor: '#07111D', borderRadius: 22, borderWidth: 1, borderColor: colors.lineStrong },
   featureInfoRow: { flexDirection: 'row', gap: 20, paddingTop: 22, alignItems: 'center', minHeight: 132 },
   featureMetaCol: { width: 145, gap: 14, paddingLeft: 2 },
   featureCopyCol: { flex: 1, minWidth: 0, justifyContent: 'center', paddingRight: 2 },
@@ -136,10 +136,10 @@ const styles = StyleSheet.create({
   briefFeatureDescription: { color: colors.muted, fontSize: 13.5, lineHeight: 20, includeFontPadding: false, flexShrink: 1 },
   briefTimePill: { alignSelf: 'flex-start', paddingLeft: 8 },
   briefThumbWrap: { flex: 1, position: 'relative', minWidth: 0, marginLeft: 2 },
-  briefThumb: { width: '100%', aspectRatio: 16 / 9, borderRadius: 18, borderWidth: 1, borderColor: colors.lineStrong },
+  briefThumb: { width: '100%', aspectRatio: 16 / 9, backgroundColor: '#07111D', borderRadius: 18, borderWidth: 1, borderColor: colors.lineStrong },
   buildPanel: { padding: 22 },
   buildBody: { flexDirection: 'row', gap: 18, alignItems: 'flex-start', minHeight: 150 },
-  buildThumb: { width: 152, aspectRatio: 16 / 9, borderRadius: 17, borderWidth: 1, borderColor: colors.lineStrong },
+  buildThumb: { width: 152, aspectRatio: 16 / 9, backgroundColor: '#07111D', borderRadius: 17, borderWidth: 1, borderColor: colors.lineStrong },
   buildText: { flex: 1, minWidth: 0, paddingRight: 2 },
   buildTopLine: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 10 },
   buildLabel: { color: colors.gold, fontSize: 13, lineHeight: 17, fontWeight: '900', letterSpacing: .3, includeFontPadding: false },
@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
   sheetTitle: { color: colors.text, fontSize: 34, lineHeight: 40, fontWeight: '900', includeFontPadding: false },
   sheetCopy: { color: colors.muted, fontSize: 15.5, lineHeight: 23, marginTop: 12, marginBottom: 22, includeFontPadding: false },
   previewRow: { minHeight: 138, borderRadius: 23, borderWidth: 1, borderColor: colors.line, backgroundColor: 'rgba(16, 30, 48, .82)', padding: 14, flexDirection: 'row', alignItems: 'center', gap: 14, marginBottom: 20 },
-  previewThumb: { width: 136, aspectRatio: 16 / 9, borderRadius: 16 },
+  previewThumb: { width: 136, aspectRatio: 16 / 9, backgroundColor: '#07111D', borderRadius: 16 },
   previewCopy: { flex: 1, minWidth: 0, paddingRight: 2 },
   previewTitle: { color: colors.text, fontSize: 17, lineHeight: 22, fontWeight: '900', marginTop: 7, includeFontPadding: false },
   previewDesc: { color: colors.muted, fontSize: 13.5, lineHeight: 18, marginTop: 7, includeFontPadding: false },

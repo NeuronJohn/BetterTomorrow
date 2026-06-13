@@ -1,6 +1,6 @@
 {
   "name": "daily-companion-component-ui",
-  "version": "1.14.0",
+  "version": "1.15.0-phone-fit",
   "private": true,
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
