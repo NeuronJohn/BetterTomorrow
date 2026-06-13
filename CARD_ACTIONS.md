@@ -1,33 +1,18 @@
-# Card action behavior
+# Card actions
 
-The v1.30 package includes working card actions driven by the daily pack data.
+## Save
+Adds the card to Memory saved items. The button updates to green `Saved`.
 
-## Fields
+## Saved / Memory bookmark
+Opens a confirmation overlay. Confirming removes the saved item from Memory only and flips saved UI back to Save. It does not hide the card.
 
-```json
-{
-  "url": "https://www.youtube.com/watch?v=vFW_TxKLyrE",
-  "videoUrl": "https://www.youtube.com/watch?v=vFW_TxKLyrE",
-  "openUrl": "https://www.youtube.com/watch?v=vFW_TxKLyrE",
-  "detailsUrl": "https://docs.expo.dev/",
-  "progressUrl": "https://expo.dev/accounts"
-}
-```
+## Hide
+Opens the Tune overlay. It does not immediately hide.
 
-## Buttons
-
-- Save: saves the card to Memory for the current session.
-- Hide: hides the card from Brief/Updates for the current session.
-- Open item: opens `url`, `videoUrl`, `youtubeUrl`, or `openUrl`.
-- View progress: opens `progressUrl`.
-- See details: opens `detailsUrl`.
-- Memory bookmark: unsaves the item.
-
-The Brief tab build-status `View progress` and `See details` buttons use teal text/icons only. The button backgrounds stay secondary/dark.
-
-
-## v1.32 Hide behavior
-
-- `Hide` on thumbnail cards opens the Tune overlay.
-- `Too much` and `Not useful` inside Tune call the hide action.
-- This keeps personalization decisions inside the daily tuning flow.
+## Tune overlay
+- `Save this`: saves and stores a tune note.
+- `Use today`: stores a tune note and opens the item.
+- `Too much`: stores a tune note and hides the card for the current session.
+- `Not useful`: stores a tune note and hides the card for the current session.
+- `Remember`: stores the optional reason as a tune note only.
+- Swipe down from the handle to dismiss.

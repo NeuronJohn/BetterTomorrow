@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Alert, Linking, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import AssetIcon from './components/AssetIcon';
@@ -7,6 +8,8 @@ import MemoryScreen from './screens/MemoryScreen';
 import PlanScreen from './screens/PlanScreen';
 import UpdatesScreen from './screens/UpdatesScreen';
 import { colors } from './theme/tokens';
+
+const TUNE_NOTES_KEY = 'dailyCompanion.tuneNotes.v1';
 
 function getCardId(item) {
   return item?.id || item?.ref || item?.title || item?.label || 'card';
@@ -52,9 +55,9 @@ function ConfirmUnsaveOverlay({ item, onCancel, onConfirm }) {
           <View style={styles.confirmIcon}>
             <AssetIcon name="bookmark" size={26} color={colors.teal} />
           </View>
-          <Text allowFontScaling={false} style={styles.confirmTitle}>Remove saved item?</Text>
+          <Text allowFontScaling={false} style={styles.confirmTitle}>Remove from Memory?</Text>
           <Text allowFontScaling={false} style={styles.confirmCopy}>
-            This will unsave it from the whole app, including Updates, Brief, and Memory.
+            This only removes the saved copy from Memory and switches saved buttons back to Save. It will not hide or delete the card from today’s Brief or Updates.
           </Text>
           <Text allowFontScaling={false} style={styles.confirmItem} numberOfLines={2}>
             {item?.title || 'Saved item'}
@@ -64,7 +67,7 @@ function ConfirmUnsaveOverlay({ item, onCancel, onConfirm }) {
               <Text allowFontScaling={false} style={styles.confirmCancelText}>Cancel</Text>
             </Pressable>
             <Pressable style={styles.confirmDanger} onPress={onConfirm}>
-              <Text allowFontScaling={false} style={styles.confirmDangerText}>Unsave</Text>
+              <Text allowFontScaling={false} style={styles.confirmDangerText}>Remove</Text>
             </Pressable>
           </View>
         </View>
@@ -78,11 +81,25 @@ export default function DailyCompanionApp() {
   const { pack, status, importFromJson, resetPack } = useDailyPack();
   const [hiddenIds, setHiddenIds] = useState([]);
   const [savedItems, setSavedItems] = useState(pack.memory?.savedItems || []);
+  const [tuneNotes, setTuneNotes] = useState(pack.memory?.tuneNotes || []);
   const [pendingUnsave, setPendingUnsave] = useState(null);
+
+  useEffect(() => {
+    let mounted = true;
+    AsyncStorage.getItem(TUNE_NOTES_KEY)
+      .then((raw) => {
+        if (!mounted || !raw) return;
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) setTuneNotes(parsed);
+      })
+      .catch(() => {});
+    return () => { mounted = false; };
+  }, []);
 
   useEffect(() => {
     setHiddenIds([]);
     setSavedItems(pack.memory?.savedItems || []);
+    if (pack.memory?.tuneNotes?.length) setTuneNotes(pack.memory.tuneNotes);
     setPendingUnsave(null);
   }, [pack.date, pack.version, pack.featured?.id]);
 
@@ -93,6 +110,29 @@ export default function DailyCompanionApp() {
 
   function isSaved(item) {
     return savedItems.some((entry) => sameSavedItem(entry, item, pack));
+  }
+
+  function persistTuneNotes(nextNotes) {
+    AsyncStorage.setItem(TUNE_NOTES_KEY, JSON.stringify(nextNotes)).catch(() => {});
+  }
+
+  function addTuneNote(action, item, meta = {}) {
+    const note = {
+      id: `tune-${Date.now()}`,
+      action,
+      itemId: getCardId(item),
+      title: item?.title || '',
+      label: item?.label || '',
+      reason: meta?.reason || '',
+      createdAt: new Date().toISOString(),
+      date: pack.date || '',
+    };
+
+    setTuneNotes((current) => {
+      const next = [note, ...current].slice(0, 80);
+      persistTuneNotes(next);
+      return next;
+    });
   }
 
   async function openUrlFor(item, action = 'open') {
@@ -120,19 +160,25 @@ export default function DailyCompanionApp() {
     setPendingUnsave(null);
   }
 
-  function handleCardAction(action, item) {
-    const id = getCardId(item);
+  function saveItem(item) {
+    setSavedItems((current) => {
+      if (current.some((entry) => sameSavedItem(entry, item, pack))) return current;
+      return [resolveSavedEntry(item, pack), ...current];
+    });
+  }
 
+  function hideItem(item) {
+    const id = getCardId(item);
+    setHiddenIds((current) => current.includes(id) ? current : [...current, id]);
+  }
+
+  function handleCardAction(action, item, meta = {}) {
     if (action === 'save') {
       if (isSaved(item)) {
         setPendingUnsave(item);
         return;
       }
-
-      setSavedItems((current) => {
-        if (current.some((entry) => sameSavedItem(entry, item, pack))) return current;
-        return [resolveSavedEntry(item, pack), ...current];
-      });
+      saveItem(item);
       return;
     }
 
@@ -142,7 +188,36 @@ export default function DailyCompanionApp() {
     }
 
     if (action === 'hide') {
-      setHiddenIds((current) => current.includes(id) ? current : [...current, id]);
+      hideItem(item);
+      return;
+    }
+
+    if (action === 'tune_save') {
+      addTuneNote('save_this', item, meta);
+      saveItem(item);
+      return;
+    }
+
+    if (action === 'tune_use_today') {
+      addTuneNote('use_today', item, meta);
+      openUrlFor(item, 'open');
+      return;
+    }
+
+    if (action === 'tune_too_much') {
+      addTuneNote('too_much', item, meta);
+      hideItem(item);
+      return;
+    }
+
+    if (action === 'tune_not_useful') {
+      addTuneNote('not_useful', item, meta);
+      hideItem(item);
+      return;
+    }
+
+    if (action === 'tune_remember') {
+      addTuneNote('remember_note', item, meta);
       return;
     }
 
@@ -160,8 +235,9 @@ export default function DailyCompanionApp() {
     memory: {
       ...(pack.memory || {}),
       savedItems,
+      tuneNotes,
     },
-  }), [pack, savedItems, savedIds]);
+  }), [pack, savedItems, savedIds, tuneNotes]);
 
   const props = {
     activeTab: screen,

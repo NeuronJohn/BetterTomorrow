@@ -232,3 +232,14 @@ Saved state is now clearer:
 ## v1.32 Hide opens Tune overlay
 
 Hide now opens the Tune overlay instead of immediately hiding. The actual hide happens from the Tune overlay options like "Too much" or "Not useful."
+
+
+## v1.33 Tune overlay + memory backend
+
+Hide opens a real modal Tune overlay now. Swipe down from the handle to close it, or tap outside.
+
+Tune decisions are stored in backend-only memory state:
+- `memory.tuneNotes`
+- persisted locally with AsyncStorage
+
+Unsaving only removes the saved Memory item and flips saved buttons back to Save. It does not hide the card.

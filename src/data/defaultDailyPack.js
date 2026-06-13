@@ -135,6 +135,7 @@ export const defaultDailyPack = {
         "color": "blue"
       }
     ],
+    "tuneNotes": [],
     "notes": [
       {
         "icon": "note",

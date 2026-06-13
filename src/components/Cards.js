@@ -1,5 +1,15 @@
-import React from 'react';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import {
+  Animated,
+  Image,
+  Modal,
+  PanResponder,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import { thumbnails } from '../data/assets';
 import { colors } from '../theme/tokens';
 import AssetIcon from './AssetIcon';
@@ -61,7 +71,7 @@ function TimePill({ label }) {
   );
 }
 
-function ActionRow({ item, onAction, primaryLabel = 'Open item' }) {
+function ActionRow({ item, onAction, onTune, primaryLabel = 'Open item' }) {
   const saved = !!item?.saved;
 
   return (
@@ -114,7 +124,7 @@ function MainFocusCard({ item, onTune, onAction }) {
         <Text allowFontScaling={false} style={styles.mainTitle} numberOfLines={2}>{item.title}</Text>
         <Text allowFontScaling={false} style={styles.mainDescription} numberOfLines={2}>{item.description}</Text>
       </View>
-      <ActionRow item={item} onAction={onAction} />
+      <ActionRow item={item} onAction={onAction} onTune={onTune} />
     </Panel>
   );
 }
@@ -131,7 +141,7 @@ function CompactFocusCard({ item, onTune, onAction }) {
         </View>
         <PressableThumbFrame item={item} onTune={onTune} onAction={onAction} style={styles.compactThumb} />
       </View>
-      <ActionRow item={item} onAction={onAction} />
+      <ActionRow item={item} onAction={onAction} onTune={onTune} />
     </Panel>
   );
 }
@@ -186,36 +196,116 @@ export function BuildStatusCard({ item, mode = 'updates', onAction, onTune }) {
 }
 
 export function TuneSheet({ item, visible, onClose, onAction }) {
+  const dragY = useRef(new Animated.Value(0)).current;
+  const [reason, setReason] = useState('');
+
+  useEffect(() => {
+    if (visible) {
+      setReason('');
+      dragY.setValue(0);
+    }
+  }, [visible, item?.id, item?.title, dragY]);
+
+  const panResponder = useMemo(() => PanResponder.create({
+    onMoveShouldSetPanResponder: (_, gesture) => gesture.dy > 8 && Math.abs(gesture.dy) > Math.abs(gesture.dx),
+    onPanResponderMove: (_, gesture) => {
+      if (gesture.dy > 0) dragY.setValue(gesture.dy);
+    },
+    onPanResponderRelease: (_, gesture) => {
+      if (gesture.dy > 88 || gesture.vy > 1.1) {
+        Animated.timing(dragY, {
+          toValue: 520,
+          duration: 180,
+          useNativeDriver: true,
+        }).start(() => onClose?.());
+      } else {
+        Animated.spring(dragY, {
+          toValue: 0,
+          useNativeDriver: true,
+          bounciness: 0,
+        }).start();
+      }
+    },
+  }), [dragY, onClose]);
+
   if (!visible || !item) return null;
-  function doAction(action) { onAction?.(action, item); onClose?.(); }
+
+  function doAction(action) {
+    onAction?.(action, item, { reason: reason.trim() });
+    onClose?.();
+  }
+
   return (
-    <View style={styles.sheetLayer} pointerEvents="box-none">
-      <View style={styles.scrim} />
-      <View style={styles.sheet}>
-        <View style={styles.handle} />
-        <Text allowFontScaling={false} style={styles.sheetTitle}>Tune this</Text>
-        <Text allowFontScaling={false} style={styles.sheetCopy}>Choose what should happen with this suggestion. Future mornings adjust from this.</Text>
-        <View style={styles.previewRow}>
-          <ThumbFrame item={item} style={styles.previewThumb} />
-          <View style={styles.previewCopy}>
-            <Text allowFontScaling={false} style={styles.label} numberOfLines={1}>{item.label || 'UPDATE'}</Text>
-            <Text allowFontScaling={false} style={styles.previewTitle} numberOfLines={2}>{item.title}</Text>
-            <Text allowFontScaling={false} style={styles.previewDesc} numberOfLines={1}>Useful for today’s skill sprint.</Text>
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+      <View style={styles.modalLayer}>
+        <Pressable style={styles.scrim} onPress={onClose} />
+        <Animated.View style={[styles.sheet, { transform: [{ translateY: dragY }] }]}>
+          <View {...panResponder.panHandlers} style={styles.dragZone}>
+            <View style={styles.handle} />
           </View>
-        </View>
-        <View style={styles.optionGrid}>
-          <PillButton label={item?.saved ? 'Saved' : 'Save this'} icon="bookmark" accentText={!!item?.saved} onPress={() => doAction(item?.saved ? 'unsave' : 'save')} style={styles.optionButton} />
-          <PillButton label="Use today" icon="bolt" onPress={() => doAction('open')} style={styles.optionButtonAccent} />
-          <PillButton label="Too much" icon="minus" onPress={() => doAction('hide')} style={styles.optionButton} />
-          <PillButton label="Not useful" icon="close" onPress={() => doAction('hide')} style={styles.optionButton} />
-        </View>
-        <View style={styles.reason}><Text allowFontScaling={false} style={styles.reasonText}>Optional reason</Text></View>
-        <View style={styles.twoActions}>
-          <PillButton label="Cancel" onPress={onClose} style={[styles.tightButton, styles.fullAction]} />
-          <PillButton label="Remember" primary onPress={() => doAction('save')} style={[styles.tightButton, styles.fullAction]} />
-        </View>
+
+          <Text allowFontScaling={false} style={styles.sheetTitle}>Tune this</Text>
+          <Text allowFontScaling={false} style={styles.sheetCopy}>
+            Tell tomorrow's pack what to do with suggestions like this.
+          </Text>
+
+          <View style={styles.previewRow}>
+            <ThumbFrame item={item} style={styles.previewThumb} />
+            <View style={styles.previewCopy}>
+              <Text allowFontScaling={false} style={styles.label} numberOfLines={1}>{item.label || 'UPDATE'}</Text>
+              <Text allowFontScaling={false} style={styles.previewTitle} numberOfLines={2}>{item.title}</Text>
+              <Text allowFontScaling={false} style={styles.previewDesc} numberOfLines={1}>
+                {item.saved ? 'Already saved in Memory.' : 'Useful for today’s skill sprint.'}
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.optionGrid}>
+            <PillButton
+              label={item?.saved ? 'Saved' : 'Save this'}
+              icon="bookmark"
+              accentText={!!item?.saved}
+              onPress={() => doAction(item?.saved ? 'unsave' : 'tune_save')}
+              style={styles.optionButton}
+            />
+            <PillButton
+              label="Use today"
+              icon="bolt"
+              onPress={() => doAction('tune_use_today')}
+              style={styles.optionButtonAccent}
+            />
+            <PillButton
+              label="Too much"
+              icon="minus"
+              onPress={() => doAction('tune_too_much')}
+              style={styles.optionButton}
+            />
+            <PillButton
+              label="Not useful"
+              icon="close"
+              onPress={() => doAction('tune_not_useful')}
+              style={styles.optionButton}
+            />
+          </View>
+
+          <TextInput
+            allowFontScaling={false}
+            value={reason}
+            onChangeText={setReason}
+            placeholder="Optional reason"
+            placeholderTextColor={colors.dim}
+            multiline
+            style={styles.reasonInput}
+            textAlignVertical="top"
+          />
+
+          <View style={styles.twoActions}>
+            <PillButton label="Cancel" onPress={onClose} style={[styles.tightButton, styles.fullAction]} />
+            <PillButton label="Remember" primary onPress={() => doAction('tune_remember')} style={[styles.tightButton, styles.fullAction]} />
+          </View>
+        </Animated.View>
       </View>
-    </View>
+    </Modal>
   );
 }
 
@@ -223,6 +313,7 @@ const styles = StyleSheet.create({
   panel: { borderRadius: 28, backgroundColor: 'rgba(13, 23, 37, .96)', borderWidth: 1, borderColor: colors.line, marginBottom: 18, overflow: 'hidden' },
   thumbFrameBase: { borderWidth: 1, borderColor: colors.lineStrong, backgroundColor: '#07111D', overflow: 'hidden' },
   thumbImage: { width: '100%', height: '100%' },
+
   mainCard: { padding: 14 },
   mainThumb: { width: '100%', borderRadius: 21 },
   mainCopyBlock: { paddingTop: 11, gap: 7 },
@@ -231,12 +322,14 @@ const styles = StyleSheet.create({
   categoryText: { color: colors.muted, fontSize: 12.5, lineHeight: 16, fontWeight: '800' },
   mainTitle: { color: colors.text, fontSize: 18.2, lineHeight: 22.5, fontWeight: '900', includeFontPadding: false },
   mainDescription: { color: colors.muted, fontSize: 13.6, lineHeight: 18.8, includeFontPadding: false },
+
   compactCard: { padding: 14 },
   compactTop: { flexDirection: 'row', alignItems: 'center', gap: 13, minHeight: 142 },
   compactCopy: { flex: 1, minWidth: 0, gap: 7, justifyContent: 'center' },
   compactThumb: { width: '56%', aspectRatio: 16 / 9, borderRadius: 19, flexShrink: 0 },
   compactTitle: { color: colors.text, fontSize: 17.5, lineHeight: 22, fontWeight: '900', includeFontPadding: false },
   compactDescription: { color: colors.muted, fontSize: 13.4, lineHeight: 18.6, includeFontPadding: false },
+
   label: { color: colors.coral, fontSize: 12.1, lineHeight: 15.5, fontWeight: '900', letterSpacing: .35, includeFontPadding: false },
   timePill: {
     alignSelf: 'flex-start',
@@ -252,12 +345,14 @@ const styles = StyleSheet.create({
     gap: 7,
   },
   timePillText: { color: colors.muted, fontSize: 13.6, lineHeight: 17, fontWeight: '800', includeFontPadding: false },
+
   actionRow: { minHeight: 52, flexDirection: 'row', gap: 10, paddingTop: 11, paddingHorizontal: 7 },
   twoActions: { minHeight: 52, flexDirection: 'row', gap: 10, paddingTop: 11, paddingHorizontal: 7 },
   tightButton: { minHeight: 52, borderRadius: 18, paddingHorizontal: 12 },
   secondaryAction: { flex: 1.25, minWidth: 0 },
   primaryAction: { flex: 1.65, minWidth: 0 },
   fullAction: { flex: 1, minWidth: 0 },
+
   buildCard: { padding: 14 },
   buildTop: { flexDirection: 'row', gap: 14, alignItems: 'center', minHeight: 106 },
   buildThumb: { width: '51%', aspectRatio: 16 / 9, borderRadius: 18, flexShrink: 0 },
@@ -267,20 +362,54 @@ const styles = StyleSheet.create({
   more: { color: colors.muted, fontSize: 18, fontWeight: '900', letterSpacing: 2 },
   buildTitle: { color: colors.text, fontSize: 17.6, lineHeight: 22, fontWeight: '900', marginTop: 7, includeFontPadding: false },
   buildDescription: { color: colors.muted, fontSize: 13.4, lineHeight: 18.5, marginTop: 6, includeFontPadding: false },
-  sheetLayer: { ...StyleSheet.absoluteFillObject, justifyContent: 'flex-end', paddingBottom: 122, zIndex: 30 },
-  scrim: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,.25)' },
-  sheet: { borderTopLeftRadius: 34, borderTopRightRadius: 34, paddingHorizontal: 26, paddingTop: 20, paddingBottom: 26, backgroundColor: 'rgba(13, 23, 37, .995)', borderWidth: 1, borderColor: colors.lineStrong },
-  handle: { alignSelf: 'center', width: 82, height: 7, borderRadius: 99, backgroundColor: '#607189', marginBottom: 22 },
-  sheetTitle: { color: colors.text, fontSize: 34, lineHeight: 40, fontWeight: '900', includeFontPadding: false },
-  sheetCopy: { color: colors.muted, fontSize: 15.5, lineHeight: 23, marginTop: 12, marginBottom: 22 },
-  previewRow: { minHeight: 126, borderRadius: 23, borderWidth: 1, borderColor: colors.line, backgroundColor: 'rgba(16, 30, 48, .82)', padding: 13, flexDirection: 'row', alignItems: 'center', gap: 13, marginBottom: 20 },
+
+  modalLayer: { flex: 1, justifyContent: 'flex-end' },
+  scrim: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0, 0, 0, .42)' },
+  sheet: {
+    borderTopLeftRadius: 34,
+    borderTopRightRadius: 34,
+    paddingHorizontal: 24,
+    paddingTop: 6,
+    paddingBottom: 28,
+    backgroundColor: 'rgba(13, 23, 37, .995)',
+    borderWidth: 1,
+    borderColor: colors.lineStrong,
+  },
+  dragZone: { alignItems: 'center', paddingTop: 10, paddingBottom: 16 },
+  handle: { width: 82, height: 7, borderRadius: 99, backgroundColor: '#607189' },
+  sheetTitle: { color: colors.text, fontSize: 32, lineHeight: 38, fontWeight: '900', includeFontPadding: false },
+  sheetCopy: { color: colors.muted, fontSize: 15, lineHeight: 22, marginTop: 10, marginBottom: 18 },
+  previewRow: {
+    minHeight: 126,
+    borderRadius: 23,
+    borderWidth: 1,
+    borderColor: colors.line,
+    backgroundColor: 'rgba(16, 30, 48, .82)',
+    padding: 13,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 13,
+    marginBottom: 18,
+  },
   previewThumb: { width: 142, aspectRatio: 16 / 9, borderRadius: 16 },
   previewCopy: { flex: 1, minWidth: 0, paddingRight: 2 },
   previewTitle: { color: colors.text, fontSize: 16.5, lineHeight: 21, fontWeight: '900', marginTop: 7 },
   previewDesc: { color: colors.muted, fontSize: 13.2, lineHeight: 17.5, marginTop: 7 },
-  optionGrid: { minHeight: 184, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', rowGap: 14, marginBottom: 18 },
-  optionButton: { width: '47.2%', minWidth: 0 },
-  optionButtonAccent: { width: '47.2%', borderColor: colors.teal, minWidth: 0 },
-  reason: { minHeight: 74, borderRadius: 20, borderWidth: 1, borderColor: colors.line, backgroundColor: 'rgba(5, 10, 17, .86)', justifyContent: 'center', paddingHorizontal: 20, marginBottom: 16 },
-  reasonText: { color: colors.dim, fontSize: 15, lineHeight: 19 },
+  optionGrid: { minHeight: 154, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', rowGap: 12, marginBottom: 14 },
+  optionButton: { width: '47.2%', minWidth: 0, minHeight: 52 },
+  optionButtonAccent: { width: '47.2%', minWidth: 0, minHeight: 52, borderColor: colors.teal },
+  reasonInput: {
+    minHeight: 68,
+    maxHeight: 96,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: colors.line,
+    backgroundColor: 'rgba(5, 10, 17, .86)',
+    color: colors.text,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    fontSize: 14.5,
+    lineHeight: 20,
+    marginBottom: 14,
+  },
 });

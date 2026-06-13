@@ -246,3 +246,15 @@
 - The Tune overlay remains the place where the user can choose "Too much" or "Not useful"; those options then hide the card for the current session.
 - Build status Hide now also opens the Tune overlay when it is acting as a normal update card.
 - View progress / See details behavior is unchanged on Brief build cards.
+
+
+# v1.33 Tune overlay + memory backend fix
+
+- Fixed the `onTune` error by passing `onTune` into thumbnail-card action rows correctly.
+- Hide now opens a real modal bottom-sheet Tune overlay.
+- Tune overlay can be dismissed by tapping outside or swiping down from the handle area.
+- Tune choices write backend-only memory notes into `memory.tuneNotes`.
+- Tune notes persist in AsyncStorage under `dailyCompanion.tuneNotes.v1`.
+- Too much / Not useful still hide the card for the current session after recording a tune note.
+- Unsaving only removes the saved item from Memory/saved state; it does not hide or remove the card from Brief or Updates.
+- Brief/Updates saved buttons update to green Saved after pressing Save.
