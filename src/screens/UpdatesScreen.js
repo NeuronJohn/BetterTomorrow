@@ -24,7 +24,7 @@ export default function UpdatesScreen({ activeTab = 'Updates', onNavigate, pack,
       <AppShell activeTab={activeTab} onNavigate={onNavigate} title="Updates" subtitle="Only useful stuff: videos, build notes, and saved interests that fit your goals.">
         {updateItems.map((item, index) => (
           item.cardType === 'buildStatus'
-            ? <BuildStatusCard key={item.id || item.ref || index} item={item} onAction={onCardAction} />
+            ? <BuildStatusCard key={item.id || item.ref || index} item={item} onAction={onCardAction} onTune={setTuneItem} />
             : <UpdatesFeatureCard key={item.id || item.ref || index} item={item} onTune={setTuneItem} onAction={onCardAction} />
         ))}
       </AppShell>

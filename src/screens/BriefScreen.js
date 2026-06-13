@@ -47,7 +47,7 @@ export default function BriefScreen({ activeTab = 'Brief', onNavigate, pack, imp
         </Panel>
 
         {!featuredHidden ? <BriefFeatureCard item={featuredForCard} onTune={setTuneItem} onAction={onCardAction} /> : null}
-        {!buildHidden ? <BuildStatusCard item={pack.buildStatus} mode="brief" onAction={onCardAction} /> : null}
+        {!buildHidden ? <BuildStatusCard item={pack.buildStatus} mode="brief" onAction={onCardAction} onTune={setTuneItem} /> : null}
       </AppShell>
 
       <TuneSheet item={tuneItem} visible={!!tuneItem} onClose={() => setTuneItem(null)} onAction={onCardAction} />

@@ -76,7 +76,7 @@ function ActionRow({ item, onAction, primaryLabel = 'Open item' }) {
       <PillButton
         label="Hide"
         icon="hide"
-        onPress={() => onAction?.('hide', item)}
+        onPress={() => onTune?.(item)}
         style={[styles.tightButton, styles.secondaryAction]}
       />
       <PillButton
@@ -148,7 +148,7 @@ export function BriefFeatureCard({ item, onTune, onAction }) {
   return <CompactFocusCard item={item} onTune={onTune} onAction={onAction} />;
 }
 
-export function BuildStatusCard({ item, mode = 'updates', onAction }) {
+export function BuildStatusCard({ item, mode = 'updates', onAction, onTune }) {
   const brief = mode === 'brief';
   const saved = !!item?.saved;
 
@@ -177,7 +177,7 @@ export function BuildStatusCard({ item, mode = 'updates', onAction }) {
           label={brief ? 'See details' : 'Hide'}
           icon={brief ? 'eye' : 'hide'}
           accentText={brief}
-          onPress={() => onAction?.(brief ? 'details' : 'hide', item)}
+          onPress={() => brief ? onAction?.('details', item) : onTune?.(item)}
           style={[styles.tightButton, styles.fullAction]}
         />
       </View>

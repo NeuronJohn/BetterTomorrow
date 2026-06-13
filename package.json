@@ -1,6 +1,6 @@
 {
   "name": "daily-companion-component-ui",
-  "version": "1.31.0-saved-confirm",
+  "version": "1.32.0-hide-opens-tune",
   "private": true,
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {

@@ -237,3 +237,12 @@
 - Save/Hide buttons inside thumbnail cards get more width and padding.
 - Open item button is slightly narrower so Save/Hide have room.
 - Time chips now include the clock icon inside the bubble, e.g. "clock 2 min".
+
+
+# v1.32 Hide opens Tune overlay
+
+- Hide no longer immediately removes a thumbnail card.
+- Pressing Hide opens the Tune overlay for personalization.
+- The Tune overlay remains the place where the user can choose "Too much" or "Not useful"; those options then hide the card for the current session.
+- Build status Hide now also opens the Tune overlay when it is acting as a normal update card.
+- View progress / See details behavior is unchanged on Brief build cards.

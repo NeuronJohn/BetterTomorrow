@@ -227,3 +227,8 @@ Saved state is now clearer:
 - Save = muted text + muted bookmark icon.
 - Pressing Saved or a Memory bookmark opens a confirmation overlay before unsaving.
 - Time chips include the clock icon inside the chip.
+
+
+## v1.32 Hide opens Tune overlay
+
+Hide now opens the Tune overlay instead of immediately hiding. The actual hide happens from the Tune overlay options like "Too much" or "Not useful."

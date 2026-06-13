@@ -24,3 +24,10 @@ The v1.30 package includes working card actions driven by the daily pack data.
 - Memory bookmark: unsaves the item.
 
 The Brief tab build-status `View progress` and `See details` buttons use teal text/icons only. The button backgrounds stay secondary/dark.
+
+
+## v1.32 Hide behavior
+
+- `Hide` on thumbnail cards opens the Tune overlay.
+- `Too much` and `Not useful` inside Tune call the hide action.
+- This keeps personalization decisions inside the daily tuning flow.
