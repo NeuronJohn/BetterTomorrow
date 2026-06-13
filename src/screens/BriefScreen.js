@@ -29,14 +29,14 @@ export default function BriefScreen({ activeTab = 'Brief', onNavigate, pack, imp
       >
         <Panel style={styles.morningCard}>
           <View style={styles.morningTop}>
-            <View style={styles.sunIcon}><AssetIcon name="sun" size={35} color={colors.teal} /></View>
-            <View>
-              <Text style={styles.greeting}>Good morning, {pack.brief.greetingName || 'Alex'}</Text>
-              <Text style={styles.date}>{pack.brief.dateLabel || ''}</Text>
+            <View style={styles.sunIcon}><AssetIcon name="sun" size={31} color={colors.teal} /></View>
+            <View style={styles.morningCopy}>
+              <Text allowFontScaling={false} style={styles.greeting} numberOfLines={1}>Good morning, {pack.brief.greetingName || 'Alex'}</Text>
+              <Text allowFontScaling={false} style={styles.date}>{pack.brief.dateLabel || ''}</Text>
             </View>
           </View>
           <View style={styles.divider} />
-          <Text style={styles.direction}>Today’s direction</Text>
+          <Text allowFontScaling={false} style={styles.direction}>Today’s direction</Text>
 
           {(pack.brief.direction || []).map((item) => (
             <DirectionRow key={item.title} icon={item.icon} title={item.title} copy={item.copy} />
@@ -61,10 +61,10 @@ export default function BriefScreen({ activeTab = 'Brief', onNavigate, pack, imp
 function DirectionRow({ icon, title, copy }) {
   return (
     <View style={styles.directionRow}>
-      <View style={styles.directionIcon}><AssetIcon name={icon || 'target'} size={27} color={colors.teal} /></View>
-      <View style={{ flex: 1 }}>
-        <Text style={styles.directionTitle}>{title}</Text>
-        <Text style={styles.directionCopy}>{copy}</Text>
+      <View style={styles.directionIcon}><AssetIcon name={icon || 'target'} size={24} color={colors.teal} /></View>
+      <View style={styles.directionText}>
+        <Text allowFontScaling={false} style={styles.directionTitle} numberOfLines={2}>{title}</Text>
+        <Text allowFontScaling={false} style={styles.directionCopy} numberOfLines={2}>{copy}</Text>
       </View>
     </View>
   );
@@ -77,21 +77,44 @@ const styles = StyleSheet.create({
     paddingHorizontal: 22,
     borderRadius: 22,
   },
-  greeting: { color: colors.text, fontSize: 23, fontWeight: '900' },
-  date: { color: colors.muted, fontSize: 16, marginTop: 6 },
-  divider: { height: 1, backgroundColor: colors.line, marginVertical: 22 },
-  direction: { color: colors.teal, fontSize: 18, fontWeight: '900', marginBottom: 18 },
-  directionRow: { flexDirection: 'row', gap: 14, alignItems: 'center', marginBottom: 18 },
+  morningCard: {
+    padding: 18,
+  },
+  morningTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+  },
+  morningCopy: {
+    flex: 1,
+    minWidth: 0,
+  },
+  sunIcon: {
+    width: 58,
+    height: 58,
+    borderRadius: 29,
+    backgroundColor: 'rgba(0, 91, 76, .22)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  greeting: { color: colors.text, fontSize: 21, lineHeight: 26, fontWeight: '900' },
+  date: { color: colors.muted, fontSize: 15.5, lineHeight: 20, marginTop: 5 },
+  divider: { height: 1, backgroundColor: colors.line, marginVertical: 18 },
+  direction: { color: colors.teal, fontSize: 17.5, lineHeight: 22, fontWeight: '900', marginBottom: 15 },
+  directionRow: { flexDirection: 'row', gap: 14, alignItems: 'center', marginBottom: 14 },
+  directionText: { flex: 1, minWidth: 0 },
   directionIcon: {
-    width: 54,
-    height: 54,
-    borderRadius: 27,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     backgroundColor: 'rgba(16, 30, 48, .9)',
     borderWidth: 1,
     borderColor: colors.line,
     alignItems: 'center',
     justifyContent: 'center',
+    flexShrink: 0,
   },
-  directionTitle: { color: colors.text, fontSize: 17.5, lineHeight: 24, fontWeight: '900' },
-  directionCopy: { color: colors.muted, fontSize: 15.5, lineHeight: 22, marginTop: 4 },
+  directionTitle: { color: colors.text, fontSize: 16.5, lineHeight: 22, fontWeight: '900' },
+  directionCopy: { color: colors.muted, fontSize: 14.5, lineHeight: 20, marginTop: 3 },
 });

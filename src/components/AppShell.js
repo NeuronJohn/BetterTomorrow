@@ -10,16 +10,16 @@ export default function AppShell({ activeTab, onNavigate, title, subtitle, heade
       <View pointerEvents="none" style={styles.blueGlow} />
       <View pointerEvents="none" style={styles.greenGlow} />
 
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.content}
-      >
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         <View style={styles.headerBlock}>
           <Text allowFontScaling={false} style={styles.kicker}>DAILY COMPANION</Text>
-          <Text allowFontScaling={false} style={styles.title}>{title}</Text>
-          {headerRight ? <View style={styles.headerRight}>{headerRight}</View> : null}
+          <View style={styles.titleRow}>
+            <Text allowFontScaling={false} style={styles.title}>{title}</Text>
+            {headerRight ? <View style={styles.headerRight}>{headerRight}</View> : null}
+          </View>
           <Text allowFontScaling={false} style={styles.subtitle}>{subtitle}</Text>
         </View>
+
         {children}
       </ScrollView>
 
@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
     zIndex: 2,
     elevation: 2,
     paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + 30 : 58,
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
     paddingBottom: 196,
   },
   headerBlock: {
@@ -42,13 +42,16 @@ const styles = StyleSheet.create({
     zIndex: 3,
     elevation: 3,
     marginBottom: 26,
+    paddingHorizontal: 2,
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
   },
   headerRight: {
-    position: 'absolute',
-    right: 0,
-    top: 42,
-    zIndex: 6,
-    elevation: 6,
+    marginLeft: 'auto',
+    flexShrink: 0,
   },
   kicker: {
     color: colors.blue,
@@ -64,14 +67,14 @@ const styles = StyleSheet.create({
     lineHeight: 50,
     fontWeight: '900',
     letterSpacing: -1.8,
-    paddingRight: 155,
+    flexShrink: 1,
   },
   subtitle: {
     color: colors.muted,
     fontSize: 18,
     lineHeight: 28,
     marginTop: 8,
-    maxWidth: 340,
+    maxWidth: 360,
   },
   blueGlow: {
     position: 'absolute',

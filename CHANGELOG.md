@@ -142,3 +142,26 @@
 - Brief and Updates share the same card geometry so they feel identical.
 - Action buttons keep the good compact look and have inner row padding.
 - Remembered preferences remain a horizontal sideways scroller with readable card text.
+
+
+# v1.22 card width pass
+
+- Reduced page side gutters so the main cards sit closer to the screen edge without touching it.
+- Kept the rest of the layout logic the same.
+
+
+# v1.23 reference layout correction
+
+- Main cards remain wider from v1.22.
+- Header import button is now layout-based inside the title row, not absolute/floating over card content.
+- Updates card returns to the good reference structure: large top thumbnail, but with a shorter 2.05:1 ratio so it is not too tall.
+- Brief card keeps the side-by-side structure, with a larger responsive right thumbnail instead of the hard-tiny thumbnail.
+- Buttons retain inner row padding and readable text.
+
+
+# v1.24 non-plan density pass
+
+- PlanScreen.js, AppShell, and BottomNav were left unchanged because Plan looks good.
+- Fixed Brief morning card by adding the missing internal layout/padding and reducing only Brief content density.
+- Rebuilt Memory into the compact reference style: smaller saved card, compact thumbnail asset, readable sideways preference cards, compact notes.
+- Reduced Brief/Updates/Build card vertical density slightly without changing the overall visual direction.

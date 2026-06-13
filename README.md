@@ -121,3 +121,24 @@ This pass dissects the difference between the desired phone screenshots and the 
 - Fixed: import button is now part of the Brief header and scrolls naturally.
 - Broken: preferences either squeezed or oversized.
 - Fixed: preferences are a horizontal scroller again.
+
+
+## v1.22 card width pass
+
+This pass only widens the main page cards by reducing the global screen horizontal padding.
+
+
+## v1.23 reference layout correction
+
+This version reverts the bad hard-lock thumbnail approach:
+- Updates uses a large top thumbnail again, matching the reference, but with shorter aspect ratio.
+- Brief uses a large side thumbnail again, matching the reference, but bounded to phone width.
+- Import pack is part of the header layout instead of an absolute overlay.
+
+
+## v1.24 non-plan density pass
+
+Plan is intentionally preserved. This pass targets the screens that looked too large on the phone:
+- Brief morning card now has proper internal padding/flex layout.
+- Memory card layout matches the compact reference more closely.
+- Brief/Updates feature cards are slightly denser while preserving the v1.23 reference direction.
