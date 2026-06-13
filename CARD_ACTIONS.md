@@ -47,3 +47,14 @@ Progress link for the active build project:
 `https://expo.dev/accounts/neuronjohn/projects/daily-companion`
 
 If imported data provides a URL without `https://`, the app adds it automatically.
+
+
+## v1.36 View progress
+
+`View progress` opens the in-app Progress screen.
+
+Inside Progress:
+- `Open project` opens the external `progressUrl`.
+- `Details` opens the `detailsUrl`.
+- Checkboxes update local project progress.
+- Add update stores a local progress note.

@@ -7,9 +7,11 @@ import BriefScreen from './screens/BriefScreen';
 import MemoryScreen from './screens/MemoryScreen';
 import PlanScreen from './screens/PlanScreen';
 import UpdatesScreen from './screens/UpdatesScreen';
+import ProgressScreen from './screens/ProgressScreen';
 import { colors } from './theme/tokens';
 
 const TUNE_NOTES_KEY = 'dailyCompanion.tuneNotes.v1';
+const PROJECT_PROGRESS_KEY = 'dailyCompanion.projectProgress.v1';
 
 function getCardId(item) {
   return item?.id || item?.ref || item?.title || item?.label || 'card';
@@ -95,6 +97,8 @@ export default function DailyCompanionApp() {
   const [savedItems, setSavedItems] = useState(pack.memory?.savedItems || []);
   const [tuneNotes, setTuneNotes] = useState(pack.memory?.tuneNotes || []);
   const [pendingUnsave, setPendingUnsave] = useState(null);
+  const [progressProject, setProgressProject] = useState(null);
+  const [projectProgress, setProjectProgress] = useState({});
 
   useEffect(() => {
     let mounted = true;
@@ -103,6 +107,18 @@ export default function DailyCompanionApp() {
         if (!mounted || !raw) return;
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed)) setTuneNotes(parsed);
+      })
+      .catch(() => {});
+    return () => { mounted = false; };
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
+    AsyncStorage.getItem(PROJECT_PROGRESS_KEY)
+      .then((raw) => {
+        if (!mounted || !raw) return;
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === 'object') setProjectProgress(parsed);
       })
       .catch(() => {});
     return () => { mounted = false; };
@@ -127,6 +143,46 @@ export default function DailyCompanionApp() {
 
   function persistTuneNotes(nextNotes) {
     AsyncStorage.setItem(TUNE_NOTES_KEY, JSON.stringify(nextNotes)).catch(() => {});
+  }
+
+  function persistProjectProgress(nextProgress) {
+    AsyncStorage.setItem(PROJECT_PROGRESS_KEY, JSON.stringify(nextProgress)).catch(() => {});
+  }
+
+  function toggleProgressTask(projectId, taskId) {
+    setProjectProgress((current) => {
+      const currentProject = current[projectId] || { completedTaskIds: [], updates: [] };
+      const hasTask = currentProject.completedTaskIds.includes(taskId);
+      const nextProject = {
+        ...currentProject,
+        completedTaskIds: hasTask
+          ? currentProject.completedTaskIds.filter((id) => id !== taskId)
+          : [...currentProject.completedTaskIds, taskId],
+      };
+      const next = { ...current, [projectId]: nextProject };
+      persistProjectProgress(next);
+      return next;
+    });
+  }
+
+  function addProgressUpdate(projectId, text) {
+    const entry = {
+      id: `progress-${Date.now()}`,
+      text,
+      createdAt: new Date().toISOString(),
+      createdAtLabel: 'Saved just now',
+    };
+
+    setProjectProgress((current) => {
+      const currentProject = current[projectId] || { completedTaskIds: [], updates: [] };
+      const nextProject = {
+        ...currentProject,
+        updates: [entry, ...(currentProject.updates || [])].slice(0, 50),
+      };
+      const next = { ...current, [projectId]: nextProject };
+      persistProjectProgress(next);
+      return next;
+    });
   }
 
   function addTuneNote(action, item, meta = {}) {
@@ -245,8 +301,14 @@ export default function DailyCompanionApp() {
       return;
     }
 
-    if (action === 'open' || action === 'progress' || action === 'details') {
-      openUrlFor(item, action);
+    if (action === 'progress') {
+      setProgressProject(item);
+      setScreen('Progress');
+      return;
+    }
+
+    if (action === 'progress_link' || action === 'open' || action === 'details') {
+      openUrlFor(item, action === 'progress_link' ? 'progress' : action);
     }
   }
 
@@ -256,6 +318,10 @@ export default function DailyCompanionApp() {
       ...(pack.featured || {}),
       saved: savedIds.includes(pack.featured?.id || 'featured'),
     },
+    buildStatus: {
+      ...(pack.buildStatus || {}),
+      saved: savedIds.includes(pack.buildStatus?.id || 'buildStatus'),
+    },
     memory: {
       ...(pack.memory || {}),
       savedItems,
@@ -263,9 +329,14 @@ export default function DailyCompanionApp() {
     },
   }), [pack, savedItems, savedIds, tuneNotes]);
 
+  function handleNavigate(nextScreen) {
+    if (nextScreen !== 'Progress') setProgressProject(null);
+    setScreen(nextScreen);
+  }
+
   const props = {
-    activeTab: screen,
-    onNavigate: setScreen,
+    activeTab: screen === 'Progress' ? 'Updates' : screen,
+    onNavigate: handleNavigate,
     pack: effectivePack,
     importFromJson,
     importStatus: status,
@@ -281,6 +352,15 @@ export default function DailyCompanionApp() {
       {screen === 'Plan' ? <PlanScreen {...props} /> : null}
       {screen === 'Updates' ? <UpdatesScreen {...props} /> : null}
       {screen === 'Memory' ? <MemoryScreen {...props} /> : null}
+      {screen === 'Progress' ? (
+        <ProgressScreen
+          {...props}
+          project={progressProject || effectivePack.buildStatus}
+          progressState={projectProgress[(progressProject || effectivePack.buildStatus)?.id || 'project'] || { completedTaskIds: [], updates: [] }}
+          onToggleTask={toggleProgressTask}
+          onAddUpdate={addProgressUpdate}
+        />
+      ) : null}
       <ConfirmUnsaveOverlay
         item={pendingUnsave}
         onCancel={() => setPendingUnsave(null)}

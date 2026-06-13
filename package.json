@@ -1,6 +1,6 @@
 {
   "name": "daily-companion-component-ui",
-  "version": "1.35.0-link-fix",
+  "version": "1.36.0-progress-screen",
   "private": true,
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {

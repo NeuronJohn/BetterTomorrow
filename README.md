@@ -263,3 +263,14 @@ Build progress URL:
 This should fix:
 - Open item not opening YouTube.
 - View progress not opening the Expo project.
+
+
+## v1.36 Progress screen
+
+`View progress` now opens an in-app screen where the user can:
+- check off project tasks,
+- see percent complete,
+- add progress updates,
+- open the external Expo project link from inside the progress screen.
+
+See `PROGRESS_SCHEMA.md` for import format.

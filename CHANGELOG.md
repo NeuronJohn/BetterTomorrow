@@ -279,3 +279,13 @@
 - Added URL normalization so pasted/imported links without `https://` still open.
 - Updated build progress URL to: https://expo.dev/accounts/neuronjohn/projects/daily-companion
 - YouTube card keeps explicit `url`, `videoUrl`, and `openUrl` fields.
+
+
+# v1.36 Progress screen
+
+- Added an in-app Progress screen for active projects.
+- View progress now opens the Progress screen instead of immediately opening an external URL.
+- Progress screen supports task checkoffs, progress percentage, next best step, and progress update notes.
+- Project progress state persists locally with AsyncStorage.
+- Added `PROGRESS_SCHEMA.md`.
+- Imported active project cards can include `progress.tasks` with stable task ids.

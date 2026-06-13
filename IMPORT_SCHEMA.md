@@ -59,3 +59,26 @@ Add saved active projects to memory:
 ## Tune memory
 
 Tune choices are stored under `memory.tuneNotes` at runtime and in AsyncStorage. Daily imports may also include prior tuneNotes if you want to carry them forward.
+
+
+## v1.36 Progress data
+
+Active projects can include:
+
+```json
+"progress": {
+  "summary": "Why this project matters right now.",
+  "currentStep": "The next best move.",
+  "tasks": [
+    {
+      "id": "stable-task-id",
+      "title": "Task title",
+      "copy": "What to do.",
+      "time": "10 min",
+      "category": "Testing"
+    }
+  ]
+}
+```
+
+Use stable task ids so checked tasks survive minor daily pack updates.

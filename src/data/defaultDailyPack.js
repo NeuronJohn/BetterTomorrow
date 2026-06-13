@@ -73,6 +73,40 @@ export const defaultDailyPack = {
     "thumbnailKey": "buildQueue",
     "thumbnailSize": "small",
     "thumbnailResizeMode": "cover",
+    "progress": {
+      "summary": "Track the dev build until the UI is clean enough to keep moving.",
+      "currentStep": "Test the newest build and check off what actually works on your phone.",
+      "tasks": [
+        {
+          "id": "install-test-build",
+          "title": "Install and open the latest dev build",
+          "copy": "Confirm it launches cleanly and the bottom nav still feels right.",
+          "time": "10 min",
+          "category": "Testing"
+        },
+        {
+          "id": "verify-card-actions",
+          "title": "Verify every card action",
+          "copy": "Save, Saved confirm, Hide/Tune, Open item, View progress, and See details.",
+          "time": "15 min",
+          "category": "Actions"
+        },
+        {
+          "id": "check-progress-flow",
+          "title": "Use this progress screen",
+          "copy": "Check off one task and add one progress update so the flow proves itself.",
+          "time": "5 min",
+          "category": "Progress"
+        },
+        {
+          "id": "send-one-screenshot",
+          "title": "Send one screenshot with the biggest issue",
+          "copy": "Only send what blocks the app from feeling clean and usable.",
+          "time": "5 min",
+          "category": "Review"
+        }
+      ]
+    },
     "detailsUrl": "https://docs.expo.dev/build/introduction/",
     "progressUrl": "https://expo.dev/accounts/neuronjohn/projects/daily-companion"
   },
