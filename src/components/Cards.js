@@ -3,7 +3,7 @@ import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { thumbnails } from '../data/assets';
 import { colors } from '../theme/tokens';
 import AssetIcon from './AssetIcon';
-import { MetaPill, PillButton } from './Buttons';
+import { PillButton } from './Buttons';
 
 export function getThumbSource(item) {
   if (item?.thumbnailUrl) return { uri: item.thumbnailUrl };
@@ -50,12 +50,42 @@ function PressableThumbFrame({ item, onTune, onAction, style }) {
   );
 }
 
+function TimePill({ label }) {
+  return (
+    <View style={styles.timePill}>
+      <AssetIcon name="clock" size={16} color={colors.muted} />
+      <Text allowFontScaling={false} numberOfLines={1} style={styles.timePillText}>
+        {label || '10 min'}
+      </Text>
+    </View>
+  );
+}
+
 function ActionRow({ item, onAction, primaryLabel = 'Open item' }) {
+  const saved = !!item?.saved;
+
   return (
     <View style={styles.actionRow}>
-      <PillButton label={item?.saved ? 'Saved' : 'Save'} icon="bookmark" onPress={() => onAction?.('save', item)} style={[styles.tightButton, styles.secondaryAction]} />
-      <PillButton label="Hide" icon="hide" onPress={() => onAction?.('hide', item)} style={[styles.tightButton, styles.secondaryAction]} />
-      <PillButton label={primaryLabel} icon="play" primary onPress={() => onAction?.('open', item)} style={[styles.tightButton, styles.primaryAction]} />
+      <PillButton
+        label={saved ? 'Saved' : 'Save'}
+        icon="bookmark"
+        accentText={saved}
+        onPress={() => onAction?.(saved ? 'unsave' : 'save', item)}
+        style={[styles.tightButton, styles.secondaryAction]}
+      />
+      <PillButton
+        label="Hide"
+        icon="hide"
+        onPress={() => onAction?.('hide', item)}
+        style={[styles.tightButton, styles.secondaryAction]}
+      />
+      <PillButton
+        label={primaryLabel}
+        icon="play"
+        primary
+        onPress={() => onAction?.('open', item)}
+        style={[styles.tightButton, styles.primaryAction]}
+      />
     </View>
   );
 }
@@ -64,10 +94,7 @@ function MetaChipRow({ item }) {
   return (
     <View style={styles.metaChipRow}>
       <Text allowFontScaling={false} style={styles.label} numberOfLines={1}>{item.label || 'UPDATE'}</Text>
-      <View style={styles.timeRow}>
-        <AssetIcon name="clock" size={18} color={colors.muted} />
-        <MetaPill label={item.duration || '10 min'} style={styles.timePill} />
-      </View>
+      <TimePill label={item.duration || '10 min'} />
       {item.category ? (
         <View style={styles.categoryInline}>
           <AssetIcon name="tag" size={15} color={colors.muted} />
@@ -100,10 +127,7 @@ function CompactFocusCard({ item, onTune, onAction }) {
           <Text allowFontScaling={false} style={styles.label} numberOfLines={1}>{item.label || 'UPDATE'}</Text>
           <Text allowFontScaling={false} style={styles.compactTitle} numberOfLines={3}>{item.title}</Text>
           <Text allowFontScaling={false} style={styles.compactDescription} numberOfLines={3}>{item.description}</Text>
-          <View style={styles.timeRow}>
-            <AssetIcon name="clock" size={18} color={colors.muted} />
-            <MetaPill label={item.duration || '10 min'} style={styles.timePill} />
-          </View>
+          <TimePill label={item.duration || '10 min'} />
         </View>
         <PressableThumbFrame item={item} onTune={onTune} onAction={onAction} style={styles.compactThumb} />
       </View>
@@ -126,6 +150,8 @@ export function BriefFeatureCard({ item, onTune, onAction }) {
 
 export function BuildStatusCard({ item, mode = 'updates', onAction }) {
   const brief = mode === 'brief';
+  const saved = !!item?.saved;
+
   return (
     <Panel style={styles.buildCard}>
       <View style={styles.buildTop}>
@@ -140,8 +166,20 @@ export function BuildStatusCard({ item, mode = 'updates', onAction }) {
         </View>
       </View>
       <View style={styles.twoActions}>
-        <PillButton label={brief ? 'View progress' : 'Save'} icon={brief ? 'trend' : 'bookmark'} accentText={brief} onPress={() => onAction?.(brief ? 'progress' : 'save', item)} style={[styles.tightButton, styles.fullAction]} />
-        <PillButton label={brief ? 'See details' : 'Hide'} icon={brief ? 'eye' : 'hide'} accentText={brief} onPress={() => onAction?.(brief ? 'details' : 'hide', item)} style={[styles.tightButton, styles.fullAction]} />
+        <PillButton
+          label={brief ? 'View progress' : saved ? 'Saved' : 'Save'}
+          icon={brief ? 'trend' : 'bookmark'}
+          accentText={brief || saved}
+          onPress={() => onAction?.(brief ? 'progress' : saved ? 'unsave' : 'save', item)}
+          style={[styles.tightButton, styles.fullAction]}
+        />
+        <PillButton
+          label={brief ? 'See details' : 'Hide'}
+          icon={brief ? 'eye' : 'hide'}
+          accentText={brief}
+          onPress={() => onAction?.(brief ? 'details' : 'hide', item)}
+          style={[styles.tightButton, styles.fullAction]}
+        />
       </View>
     </Panel>
   );
@@ -166,7 +204,7 @@ export function TuneSheet({ item, visible, onClose, onAction }) {
           </View>
         </View>
         <View style={styles.optionGrid}>
-          <PillButton label="Save this" icon="bookmark" onPress={() => doAction('save')} style={styles.optionButton} />
+          <PillButton label={item?.saved ? 'Saved' : 'Save this'} icon="bookmark" accentText={!!item?.saved} onPress={() => doAction(item?.saved ? 'unsave' : 'save')} style={styles.optionButton} />
           <PillButton label="Use today" icon="bolt" onPress={() => doAction('open')} style={styles.optionButtonAccent} />
           <PillButton label="Too much" icon="minus" onPress={() => doAction('hide')} style={styles.optionButton} />
           <PillButton label="Not useful" icon="close" onPress={() => doAction('hide')} style={styles.optionButton} />
@@ -200,13 +238,25 @@ const styles = StyleSheet.create({
   compactTitle: { color: colors.text, fontSize: 17.5, lineHeight: 22, fontWeight: '900', includeFontPadding: false },
   compactDescription: { color: colors.muted, fontSize: 13.4, lineHeight: 18.6, includeFontPadding: false },
   label: { color: colors.coral, fontSize: 12.1, lineHeight: 15.5, fontWeight: '900', letterSpacing: .35, includeFontPadding: false },
-  timeRow: { flexDirection: 'row', alignItems: 'center', gap: 7 },
-  timePill: { alignSelf: 'flex-start', minHeight: 34, paddingVertical: 7, paddingHorizontal: 10, fontSize: 13.6 },
-  actionRow: { minHeight: 50, flexDirection: 'row', gap: 10, paddingTop: 11, paddingHorizontal: 7 },
-  twoActions: { minHeight: 50, flexDirection: 'row', gap: 10, paddingTop: 11, paddingHorizontal: 7 },
-  tightButton: { minHeight: 50, borderRadius: 18, paddingHorizontal: 9 },
-  secondaryAction: { flex: 1.04, minWidth: 0 },
-  primaryAction: { flex: 2.08, minWidth: 0 },
+  timePill: {
+    alignSelf: 'flex-start',
+    minHeight: 34,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: colors.line,
+    backgroundColor: 'rgba(10, 20, 34, .86)',
+    paddingVertical: 7,
+    paddingHorizontal: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 7,
+  },
+  timePillText: { color: colors.muted, fontSize: 13.6, lineHeight: 17, fontWeight: '800', includeFontPadding: false },
+  actionRow: { minHeight: 52, flexDirection: 'row', gap: 10, paddingTop: 11, paddingHorizontal: 7 },
+  twoActions: { minHeight: 52, flexDirection: 'row', gap: 10, paddingTop: 11, paddingHorizontal: 7 },
+  tightButton: { minHeight: 52, borderRadius: 18, paddingHorizontal: 12 },
+  secondaryAction: { flex: 1.25, minWidth: 0 },
+  primaryAction: { flex: 1.65, minWidth: 0 },
   fullAction: { flex: 1, minWidth: 0 },
   buildCard: { padding: 14 },
   buildTop: { flexDirection: 'row', gap: 14, alignItems: 'center', minHeight: 106 },

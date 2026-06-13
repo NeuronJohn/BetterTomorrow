@@ -1,6 +1,6 @@
 {
   "name": "daily-companion-component-ui",
-  "version": "1.30.0-functional-cards",
+  "version": "1.31.0-saved-confirm",
   "private": true,
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {

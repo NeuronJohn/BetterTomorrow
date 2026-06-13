@@ -226,3 +226,14 @@
 - Hide removes cards for the current session. Save adds to Memory for the current session.
 - Brief tab build-status `View progress` and `See details` text/icons are teal only, with dark secondary backgrounds unchanged.
 - Thumbnail card spacing stays close to v1.29 while slightly improving real-data fit.
+
+
+# v1.31 saved confirmation polish
+
+- Saved buttons now show green text and green bookmark icon only when the item is saved.
+- Unsaving requires a confirmation popup overlay.
+- Confirmed unsave removes the item across the whole app state.
+- Unsaved buttons remain muted and say "Save".
+- Save/Hide buttons inside thumbnail cards get more width and padding.
+- Open item button is slightly narrower so Save/Hide have room.
+- Time chips now include the clock icon inside the bubble, e.g. "clock 2 min".

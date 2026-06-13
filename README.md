@@ -218,3 +218,12 @@ Included pack files:
 The featured task uses a real YouTube video and actual YouTube thumbnail URL for `Expo in 100 Seconds`. Save, Hide, Open item, View progress, See details, and Memory unsave now work from the preloaded/imported daily pack data.
 
 Requested color tweak: the Brief tab build-status buttons `View progress` and `See details` use the same teal as the Open item button for text/icons only.
+
+
+## v1.31 saved confirmation polish
+
+Saved state is now clearer:
+- Saved = green text + green bookmark icon.
+- Save = muted text + muted bookmark icon.
+- Pressing Saved or a Memory bookmark opens a confirmation overlay before unsaving.
+- Time chips include the clock icon inside the chip.
