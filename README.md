@@ -251,3 +251,15 @@ Interactive polish added:
 - `See all` and `Manage` buttons now open real bottom-sheet UI.
 - Build status `•••` opens active project options.
 - Imported data can replicate the same card look using the schema in `IMPORT_SCHEMA.md`.
+
+
+## v1.35 link fix
+
+The app now opens web links directly with `Linking.openURL` and normalizes missing protocols.
+
+Build progress URL:
+`https://expo.dev/accounts/neuronjohn/projects/daily-companion`
+
+This should fix:
+- Open item not opening YouTube.
+- View progress not opening the Expo project.

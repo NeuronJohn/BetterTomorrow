@@ -148,19 +148,24 @@ export default function DailyCompanionApp() {
     });
   }
 
+  function normalizeUrl(url) {
+    if (!url || typeof url !== 'string') return '';
+    const trimmed = url.trim();
+    if (!trimmed) return '';
+    if (/^https?:\/\//i.test(trimmed)) return trimmed;
+    return `https://${trimmed}`;
+  }
+
   async function openUrlFor(item, action = 'open') {
-    const url = resolveOpenUrl(item, action);
+    const url = normalizeUrl(resolveOpenUrl(item, action));
     if (!url) {
       Alert.alert('No link yet', 'This card does not include a URL in the daily pack.');
       return;
     }
 
     try {
-      const canOpen = await Linking.canOpenURL(url);
-      if (!canOpen) {
-        Alert.alert('Cannot open link', url);
-        return;
-      }
+      // Do not block web links behind canOpenURL. On Android, canOpenURL can fail
+      // because of package visibility/query restrictions even when openURL would work.
       await Linking.openURL(url);
     } catch (error) {
       Alert.alert('Could not open link', url);

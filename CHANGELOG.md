@@ -271,3 +271,11 @@
 - Build status card now behaves like an active project: visible buttons are View progress / See details; save/hide live under `•••`.
 - Active project saved state is import-friendly via `memory.savedItems`.
 - Added `IMPORT_SCHEMA.md` and updated `CARD_ACTIONS.md`.
+
+
+# v1.35 link fix
+
+- Fixed link opening by calling `Linking.openURL(url)` directly for web links instead of blocking behind `Linking.canOpenURL`.
+- Added URL normalization so pasted/imported links without `https://` still open.
+- Updated build progress URL to: https://expo.dev/accounts/neuronjohn/projects/daily-companion
+- YouTube card keeps explicit `url`, `videoUrl`, and `openUrl` fields.

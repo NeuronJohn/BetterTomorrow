@@ -74,7 +74,7 @@ export const defaultDailyPack = {
     "thumbnailSize": "small",
     "thumbnailResizeMode": "cover",
     "detailsUrl": "https://docs.expo.dev/build/introduction/",
-    "progressUrl": "https://expo.dev/accounts"
+    "progressUrl": "https://expo.dev/accounts/neuronjohn/projects/daily-companion"
   },
   "plan": {
     "title": "Today\u2019s plan",

@@ -37,3 +37,13 @@ Active projects should come from import data with:
 - Saved items `See all` opens all saved items.
 - Remembered preferences `Manage` opens preferences and backend tune-memory summary.
 - Remembered notes `See all` opens all notes.
+
+
+## v1.35 link behavior
+
+The app opens web links directly through React Native `Linking.openURL`.
+
+Progress link for the active build project:
+`https://expo.dev/accounts/neuronjohn/projects/daily-companion`
+
+If imported data provides a URL without `https://`, the app adds it automatically.
