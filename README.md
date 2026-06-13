@@ -1,75 +1,74 @@
-# Daily Companion Dev Build v0.3
+# Daily Companion Component UI v1.1
 
-This version drops Expo Go. It is set up for a real Android **development build** installed on your phone.
+This is a real component-based UI package with data-driven daily content.
 
-## Why this setup
+## What changed
 
-Expo Go is only a sandbox. A development build is your own custom version of Expo Go for this app, which means native config and notification behavior can be customized without depending on the Expo Go app version.
+- Replaced weak text symbols with generated PNG icon assets.
+- Kept generated artwork only for small UI assets and 16:9 thumbnails.
+- Added an **Import daily pack** button to the Brief tab.
+- Added a JSON daily-pack system that controls:
+  - Brief greeting/direction
+  - Featured video/update
+  - Plan tasks
+  - Updates tab cards
+  - Memory saved items/preferences/notes
+  - Morning/evening notification copy
+- The app stores imported JSON with AsyncStorage.
+- No fake time/battery text is rendered; the app leaves top safe-area space for the phone OS.
+- No new native dependencies.
 
-## Folder map
+## Daily pack import
+
+Use the button on Brief: **Import daily pack**.
+
+A template is included:
 
 ```text
-App.js
-src/DailyCompanionApp.js          Main screen / UI
-src/data/projectQueue.js          Small hireability project ideas
-src/services/planner.js           Daily plan logic
-src/services/notifications.js     Android notification setup
-src/services/storage.js           Local phone storage
-src/services/date.js              Date helpers
-src/styles/palette.js             Theme colors
-eas.json                          Android dev/preview build profiles
-scripts/                          Windows helper scripts
+daily_pack_template.json
 ```
 
-## First-time setup
+Paste that JSON into the import modal, edit it, or ask ChatGPT for a new daily pack.
 
-Use PowerShell in this folder:
+## Thumbnail support
 
-```powershell
-npm install
-npx expo install --fix
-npm install --global eas-cli
-eas login
-eas build:configure
-eas build --platform android --profile development
+The current build supports local thumbnail keys:
+
+```json
+"thumbnailKey": "ticketTracker"
 ```
 
-When EAS finishes, open the install link/QR on your Android phone. This installs **Daily Companion** as its own dev app.
+or remote thumbnails:
 
-## Daily editing flow after the dev app is installed
-
-For normal JS/UI/text/planner edits:
-
-```powershell
-npx expo start --dev-client
+```json
+"thumbnailUrl": "https://example.com/thumbnail.jpg"
 ```
 
-Open the Daily Companion dev app on your phone. It connects to the dev server. Most future UI/text/task logic updates will show this way without rebuilding the APK.
+Remote URLs use React Native's built-in Image support.
 
-## When you must rebuild
+## Build safety
 
-Rebuild only when we change native things, such as:
+This update uses only React Native components and bundled assets:
 
-- new native package
-- notification native config
-- app permissions
-- app icon/splash
-- Android package name
-- app.json plugin changes
+- `View`
+- `Text`
+- `Image`
+- `Pressable`
+- `ScrollView`
+- `Modal`
+- `TextInput`
+- `AsyncStorage` already present in the project
 
-Command:
 
-```powershell
-eas build --platform android --profile development
+## Morning / evening notifications
+
+Daily pack JSON includes:
+
+```json
+"notifications": {
+  "morning": { "enabled": true, "time": "08:15", "title": "Daily Companion", "body": "Your brief is ready." },
+  "evening": { "enabled": true, "time": "20:45", "title": "Quick check-in", "body": "Drop one sentence so tomorrow can adjust." }
+}
 ```
 
-## Git commit for this setup
-
-```powershell
-git add .
-git commit -m "feat: set up notification-first Android dev build"
-```
-
-## Current limitation
-
-This is still local-first. It can schedule notifications from the app and remember your notes/preferences locally. For a true cloud AI companion that sends fresh AI-generated notifications even if you never open the app, we will later need a backend + push notification tokens + scheduled AI generation.
+When a daily pack is imported, the app requests notification permission and schedules the morning/evening reminders from that JSON.

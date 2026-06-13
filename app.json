@@ -2,7 +2,7 @@
   "expo": {
     "name": "Daily Companion",
     "slug": "daily-companion",
-    "version": "0.3.0",
+    "version": "1.14.0",
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
     "scheme": "dailycompanion",
@@ -16,7 +16,7 @@
         "SCHEDULE_EXACT_ALARM"
       ],
       "adaptiveIcon": {
-        "backgroundColor": "#0B1119"
+        "backgroundColor": "#050A11"
       }
     },
     "plugins": [

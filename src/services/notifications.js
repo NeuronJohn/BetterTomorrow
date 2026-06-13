@@ -1,121 +1,81 @@
-import { Platform } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Notifications from 'expo-notifications';
-import { notificationBodyForDay } from './planner';
 
-export const CHANNEL_ID = 'daily-companion';
-export const CATEGORY_ID = 'dailycompanion';
-export const ACTION_NOT_TODAY = 'not_today';
-export const ACTION_DONE = 'mark_done';
+const STORAGE_KEY = 'dailyCompanion.notificationIds.v1';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
+    shouldPlaySound: false,
+    shouldSetBadge: false,
     shouldShowBanner: true,
     shouldShowList: true,
-    shouldPlaySound: false,
-    shouldSetBadge: false
-  })
+  }),
 });
 
-export async function setupNotificationInfrastructure() {
-  if (Platform.OS === 'android') {
-    await Notifications.setNotificationChannelAsync(CHANNEL_ID, {
-      name: 'Daily Companion',
-      importance: Notifications.AndroidImportance.DEFAULT,
-      vibrationPattern: [0, 120, 80, 120],
-      lightColor: '#67D4C2',
-      sound: null
-    });
-  }
+function parseTime(value, fallbackHour, fallbackMinute) {
+  const match = String(value || '').match(/^(\d{1,2}):(\d{2})$/);
+  if (!match) return { hour: fallbackHour, minute: fallbackMinute };
+  const hour = Math.max(0, Math.min(23, Number(match[1])));
+  const minute = Math.max(0, Math.min(59, Number(match[2])));
+  return { hour, minute };
+}
 
-  await Notifications.setNotificationCategoryAsync(CATEGORY_ID, [
-    {
-      identifier: ACTION_DONE,
-      buttonTitle: 'Done',
-      options: { opensAppToForeground: false }
-    },
-    {
-      identifier: ACTION_NOT_TODAY,
-      buttonTitle: 'Not today',
-      options: { opensAppToForeground: false, isDestructive: false }
+async function clearOldNotifications() {
+  try {
+    const raw = await AsyncStorage.getItem(STORAGE_KEY);
+    const ids = raw ? JSON.parse(raw) : [];
+    await Promise.all(ids.map((id) => Notifications.cancelScheduledNotificationAsync(id)));
+  } catch {
+    // Keep UI safe even if notification cleanup fails.
+  }
+}
+
+export async function scheduleDailyPackNotifications(pack) {
+  try {
+    const existing = await Notifications.getPermissionsAsync();
+    const finalStatus = existing.status === 'granted'
+      ? existing.status
+      : (await Notifications.requestPermissionsAsync()).status;
+
+    if (finalStatus !== 'granted') {
+      return { ok: false, reason: 'Notification permission not granted' };
     }
-  ]);
-}
 
-export async function requestNotificationPermission() {
-  await setupNotificationInfrastructure();
-  const existing = await Notifications.getPermissionsAsync();
-  if (existing.status === 'granted') return true;
-  const requested = await Notifications.requestPermissionsAsync();
-  return requested.status === 'granted';
-}
+    await clearOldNotifications();
 
-export async function cancelAllCompanionNotifications() {
-  await Notifications.cancelAllScheduledNotificationsAsync();
-}
+    const ids = [];
+    const morning = pack?.notifications?.morning;
+    const evening = pack?.notifications?.evening;
 
-export async function scheduleCompanionLoop(settings, day) {
-  await setupNotificationInfrastructure();
-  await Notifications.cancelAllScheduledNotificationsAsync();
-
-  if (!settings.notificationLoopEnabled) return false;
-
-  const permission = await Notifications.getPermissionsAsync();
-  if (permission.status !== 'granted') return false;
-
-  if (settings.morningEnabled) {
-    await Notifications.scheduleNotificationAsync({
-      content: {
-        title: day.greeting || 'Good morning. Small plan, real direction.',
-        body: notificationBodyForDay(day),
-        data: { kind: 'morning', dateKey: day.date },
-        categoryIdentifier: CATEGORY_ID
-      },
-      trigger: {
-        type: Notifications.SchedulableTriggerInputTypes.DAILY,
-        hour: settings.morningHour,
-        minute: settings.morningMinute,
-        channelId: CHANNEL_ID
-      }
-    });
-  }
-
-  if (settings.eveningEnabled) {
-    await Notifications.scheduleNotificationAsync({
-      content: {
-        title: 'Leave one sentence for tomorrow',
-        body: 'What worked, what sucked, or what should I avoid? One sentence is enough.',
-        data: { kind: 'evening', dateKey: day.date },
-        categoryIdentifier: CATEGORY_ID
-      },
-      trigger: {
-        type: Notifications.SchedulableTriggerInputTypes.DAILY,
-        hour: settings.eveningHour,
-        minute: settings.eveningMinute,
-        channelId: CHANNEL_ID
-      }
-    });
-  }
-
-  return true;
-}
-
-export async function scheduleTestNotification(day) {
-  const granted = await requestNotificationPermission();
-  if (!granted) return false;
-
-  await Notifications.scheduleNotificationAsync({
-    content: {
-      title: 'Daily Companion test',
-      body: notificationBodyForDay(day),
-      data: { kind: 'test', dateKey: day.date },
-      categoryIdentifier: CATEGORY_ID
-    },
-    trigger: {
-      type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
-      seconds: 3,
-      channelId: CHANNEL_ID
+    if (morning?.enabled !== false) {
+      const { hour, minute } = parseTime(morning?.time, 8, 15);
+      const id = await Notifications.scheduleNotificationAsync({
+        content: {
+          title: morning?.title || 'Daily Companion',
+          body: morning?.body || 'Your brief is ready.',
+          data: { screen: 'Brief', kind: 'morning' },
+        },
+        trigger: { hour, minute, repeats: true },
+      });
+      ids.push(id);
     }
-  });
 
-  return true;
+    if (evening?.enabled !== false) {
+      const { hour, minute } = parseTime(evening?.time, 20, 45);
+      const id = await Notifications.scheduleNotificationAsync({
+        content: {
+          title: evening?.title || 'Quick check-in',
+          body: evening?.body || 'Drop one sentence so tomorrow can adjust.',
+          data: { screen: 'Brief', kind: 'evening' },
+        },
+        trigger: { hour, minute, repeats: true },
+      });
+      ids.push(id);
+    }
+
+    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(ids));
+    return { ok: true, count: ids.length };
+  } catch (error) {
+    return { ok: false, reason: error?.message || 'Notification scheduling failed' };
+  }
 }

@@ -1,16 +1,12 @@
 {
-  "name": "daily-companion-devbuild",
-  "version": "0.3.0",
+  "name": "daily-companion-component-ui",
+  "version": "1.14.0",
   "private": true,
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start --dev-client",
-    "start:tunnel": "expo start --dev-client --tunnel",
-    "start:expo-go-fallback": "expo start",
-    "build:android:dev": "eas build --platform android --profile development",
-    "build:android:preview": "eas build --platform android --profile preview",
-    "doctor": "npx expo-doctor",
-    "fix:deps": "npx expo install --fix"
+    "android": "expo run:android",
+    "build:android:dev": "eas build --platform android --profile development"
   },
   "dependencies": {
     "expo": "56.0.11",

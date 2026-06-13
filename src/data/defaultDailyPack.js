@@ -1,0 +1,130 @@
+export const defaultDailyPack = {
+  "version": 1,
+  "date": "2026-06-12",
+  "notifications": {
+    "morning": {
+      "enabled": true,
+      "time": "08:15",
+      "title": "Daily Companion",
+      "body": "Your brief is ready: one focused outcome, one useful update, one small reset."
+    },
+    "evening": {
+      "enabled": true,
+      "time": "20:45",
+      "title": "Quick check-in",
+      "body": "Drop one sentence so tomorrow can adjust."
+    }
+  },
+  "brief": {
+    "title": "Brief",
+    "subtitle": "Your morning snapshot. Focus on what moves the needle today.",
+    "greetingName": "Alex",
+    "dateLabel": "Thursday, May 23",
+    "direction": [
+      {
+        "icon": "target",
+        "title": "Ship one high-impact outcome",
+        "copy": "Finish the ticket tracker UI and commit."
+      },
+      {
+        "icon": "people",
+        "title": "Unblock and align",
+        "copy": "Follow up on 2 pending conversations."
+      },
+      {
+        "icon": "bolt",
+        "title": "Keep the momentum",
+        "copy": "Small consistent actions > big one-offs."
+      }
+    ]
+  },
+  "featured": {
+    "id": "ticket-tracker-video",
+    "type": "youtube",
+    "label": "YOUTUBE",
+    "title": "Build a clean ticket tracker UI",
+    "description": "Use it as a fast AI-assisted project and commit the result today.",
+    "duration": "10 min",
+    "category": "Productivity",
+    "saved": true,
+    "thumbnailKey": "ticketTracker",
+    "thumbnailUrl": ""
+  },
+  "buildStatus": {
+    "id": "android-dev-build",
+    "label": "BUILD STATUS",
+    "title": "Android dev build queue",
+    "description": "No action needed. Keep reviewing visuals before touching the build.",
+    "thumbnailKey": "buildQueue"
+  },
+  "plan": {
+    "title": "Today\u2019s plan",
+    "subtitle": "A focused plan for steady progress without the pressure.",
+    "mainTarget": {
+      "label": "MAIN TARGET",
+      "title": "Ship a clean ticket tracker UI",
+      "copy": "Keep it small, clean, and commit-ready."
+    },
+    "tasks": [
+      {
+        "title": "Support-ticket mini demo",
+        "copy": "Build the list, filters, and status flow with mock data.",
+        "time": "60 min"
+      },
+      {
+        "title": "Business nudge",
+        "copy": "Send one useful update. No overthinking.",
+        "time": "30 min"
+      },
+      {
+        "title": "Stability reset",
+        "copy": "Clear one small personal admin task.",
+        "time": "20 min"
+      }
+    ]
+  },
+  "updates": [
+    {
+      "ref": "featured"
+    },
+    {
+      "ref": "buildStatus"
+    }
+  ],
+  "memory": {
+    "savedItems": [
+      {
+        "ref": "featured",
+        "savedAt": "Saved",
+        "duration": "12 min",
+        "category": "Productivity"
+      }
+    ],
+    "preferences": [
+      {
+        "icon": "image",
+        "text": "Prefer thumbnail-led updates",
+        "color": "teal"
+      },
+      {
+        "icon": "hide",
+        "text": "Hide generic dashboard ideas",
+        "color": "gold"
+      },
+      {
+        "icon": "leaf",
+        "text": "Keep daily nudges light",
+        "color": "blue"
+      }
+    ],
+    "notes": [
+      {
+        "icon": "note",
+        "title": "Why this matters",
+        "copy": "You like clean, practical outcomes and quick wins. Focus on ship-ready UI and real-world utility.",
+        "date": "Saved May 10, 2025",
+        "tag": "Context"
+      }
+    ]
+  }
+};
