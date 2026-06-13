@@ -106,3 +106,12 @@
 - Moved Brief `Import pack` to a Brief-only absolute header overlay so it is not below the description.
 - Added a compact card-only thumbnail for Brief/Updates cards; Memory keeps the original saved-item thumbnail behavior.
 - Tuned Save / Hide / Open item / View progress / See details button sizing so labels do not collapse into tiny text on Android.
+
+
+# v1.18 S24/Pixel compact thumbnail fix
+
+- Did not modify MemoryScreen.js or PlanScreen.js.
+- Removed the giant full-width Updates thumbnail layout.
+- Updates now uses the same compact side-by-side thumbnail structure as Brief.
+- Brief thumbnail/text split was tightened so the image cannot dominate the card.
+- Action buttons were tuned down into compact pills so labels do not get smushed.

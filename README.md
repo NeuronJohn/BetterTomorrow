@@ -84,3 +84,13 @@ The update is only for:
 - Brief import button placement,
 - Brief/Updates thumbnail fit,
 - Brief/Updates/Build action button sizing.
+
+
+## v1.18 targeted note
+
+This version only changes:
+- Updates card thumbnail layout,
+- Brief card thumbnail sizing,
+- Brief/Updates/Build action button sizing.
+
+It does not modify Plan or Memory screen files.

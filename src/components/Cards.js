@@ -18,20 +18,23 @@ export function Panel({ children, style }) { return <View style={[styles.panel, 
 
 export function UpdatesFeatureCard({ item, onTune }) {
   return (
-    <Panel style={styles.featurePanel}>
-      <Pressable onLongPress={() => onTune?.(item)} delayLongPress={450}>
-        <Image source={getCardThumbSource(item)} resizeMode="cover" style={styles.featureThumb} />
-      </Pressable>
-      <View style={styles.featureInfoRow}>
-        <View style={styles.featureMetaCol}>
+    <Panel style={styles.compactFeaturePanel}>
+      <View style={styles.compactFeatureBody}>
+        <View style={styles.compactFeatureText}>
           <Text allowFontScaling={false} style={styles.youtubeLabel} numberOfLines={1}>{item.label || 'YOUTUBE'}</Text>
-          <View style={styles.timeRow}><AssetIcon name="clock" size={24} color={colors.muted} /><MetaPill label={item.duration || '10 min'} style={styles.timePill} /></View>
+          <Text allowFontScaling={false} style={styles.compactFeatureTitle} numberOfLines={3}>{item.title}</Text>
+          <Text allowFontScaling={false} style={styles.compactFeatureDescription} numberOfLines={3}>{item.description}</Text>
+          <View style={styles.timeRow}>
+            <AssetIcon name="clock" size={23} color={colors.muted} />
+            <MetaPill label={item.duration || '10 min'} style={styles.briefTimePill} />
+          </View>
         </View>
-        <View style={styles.featureCopyCol}>
-          <Text allowFontScaling={false} style={styles.featureTitle} numberOfLines={2} adjustsFontSizeToFit minimumFontScale={0.82}>{item.title}</Text>
-          <Text allowFontScaling={false} style={styles.featureDescription} numberOfLines={3} adjustsFontSizeToFit minimumFontScale={0.78}>{item.description}</Text>
-        </View>
+
+        <Pressable onLongPress={() => onTune?.(item)} delayLongPress={450} style={styles.compactThumbWrap}>
+          <Image source={getCardThumbSource(item)} resizeMode="cover" style={styles.compactThumb} />
+        </Pressable>
       </View>
+
       <View style={styles.threeActions}>
         <PillButton label="Save" icon="bookmark" style={styles.secondaryAction} />
         <PillButton label="Hide" icon="hide" style={styles.secondaryAction} />
@@ -129,14 +132,14 @@ const styles = StyleSheet.create({
   timePill: { alignSelf: 'flex-start', paddingLeft: 8 },
   featureTitle: { color: colors.text, fontSize: 20.5, lineHeight: 27, fontWeight: '900', includeFontPadding: false },
   featureDescription: { color: colors.muted, fontSize: 15, lineHeight: 22, marginTop: 10, includeFontPadding: false },
-  threeActions: { minHeight: 64, flexDirection: 'row', gap: 10, paddingTop: 16 },
+  threeActions: { minHeight: 64, flexDirection: 'row', gap: 12, paddingTop: 16 },
   twoActions: { minHeight: 64, flexDirection: 'row', gap: 12, paddingTop: 18 },
-  secondaryAction: { flex: 1.08, minWidth: 0 },
-  primaryAction: { flex: 1.72, minWidth: 0 },
+  secondaryAction: { flex: 1.05, minWidth: 0 },
+  primaryAction: { flex: 1.95, minWidth: 0 },
   fullAction: { flex: 1, minWidth: 0 },
   briefFeaturePanel: { padding: 22 },
-  briefFeatureBody: { flexDirection: 'row', gap: 20, alignItems: 'center', minHeight: 250 },
-  briefFeatureText: { width: '36%', gap: 10, minWidth: 0, justifyContent: 'center', paddingRight: 2 },
+  briefFeatureBody: { flexDirection: 'row', gap: 18, alignItems: 'center', minHeight: 228 },
+  briefFeatureText: { width: '39%', gap: 9, minWidth: 0, justifyContent: 'center', paddingRight: 2 },
   briefFeatureTitle: { color: colors.text, fontSize: 18.5, lineHeight: 24, fontWeight: '900', includeFontPadding: false, flexShrink: 1 },
   briefFeatureDescription: { color: colors.muted, fontSize: 13.5, lineHeight: 20, includeFontPadding: false, flexShrink: 1 },
   briefTimePill: { alignSelf: 'flex-start', paddingLeft: 8 },
