@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Platform, StatusBar, StyleSheet, Text, View } from 'react-native';
 import AssetIcon from '../components/AssetIcon';
 import AppShell from '../components/AppShell';
 import { BriefFeatureCard, BuildStatusCard, Panel, TuneSheet } from '../components/Cards';
@@ -19,13 +19,6 @@ export default function BriefScreen({ activeTab = 'Brief', onNavigate, pack, imp
         title={pack.brief.title || 'Brief'}
         subtitle={pack.brief.subtitle || 'Your morning snapshot. Focus on what moves the needle today.'}
       >
-        <PillButton
-          label="Import pack"
-          icon="import"
-          onPress={() => setImportOpen(true)}
-          style={styles.importButton}
-        />
-
         <Panel style={styles.morningCard}>
           <View style={styles.morningTop}>
             <View style={styles.sunIcon}><AssetIcon name="sun" size={35} color={colors.teal} /></View>
@@ -45,6 +38,15 @@ export default function BriefScreen({ activeTab = 'Brief', onNavigate, pack, imp
         <BriefFeatureCard item={pack.featured} onTune={setTuneItem} />
         <BuildStatusCard item={pack.buildStatus} mode="brief" />
       </AppShell>
+
+      <View pointerEvents="box-none" style={styles.importOverlay}>
+        <PillButton
+          label="Import pack"
+          icon="import"
+          onPress={() => setImportOpen(true)}
+          style={styles.importButton}
+        />
+      </View>
 
       <TuneSheet item={tuneItem} visible={!!tuneItem} onClose={() => setTuneItem(null)} />
       <ImportDailyPackModal
@@ -70,13 +72,18 @@ function DirectionRow({ icon, title, copy }) {
 }
 
 const styles = StyleSheet.create({
+  importOverlay: {
+    position: 'absolute',
+    top: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + 36 : 64,
+    right: 20,
+    zIndex: 90,
+    elevation: 90,
+  },
   importButton: {
-    alignSelf: 'flex-start',
-    minWidth: 206,
-    paddingHorizontal: 24,
-    marginTop: -8,
-    marginBottom: 20,
-    minHeight: 58,
+    minWidth: 216,
+    minHeight: 54,
+    paddingHorizontal: 22,
+    borderRadius: 22,
   },
   morningCard: { padding: 20 },
   morningTop: { flexDirection: 'row', alignItems: 'center', gap: 16 },

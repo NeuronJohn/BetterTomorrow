@@ -74,12 +74,13 @@ Daily pack JSON includes:
 When a daily pack is imported, the app requests notification permission and schedules the morning/evening reminders from that JSON.
 
 
-## Phone-fit note
+## v1.17 S24/Pixel targeted fix
 
-This version is a device-fit test for Galaxy S24 Ultra / Pixel-class Android screens.
+This version intentionally does **not** modify:
+- `src/screens/MemoryScreen.js`
+- `src/screens/PlanScreen.js`
 
-The previous generated preview images were static visual previews, not true Android emulator captures. This pass makes the real React Native layout safer by:
-- disabling system font scaling for app UI text,
-- making thumbnails use contain sizing instead of cropping,
-- replacing absolute Memory layouts with normal flex rows,
-- making preference cards horizontally scrollable instead of squeezing three cards into a narrow phone width.
+The update is only for:
+- Brief import button placement,
+- Brief/Updates thumbnail fit,
+- Brief/Updates/Build action button sizing.

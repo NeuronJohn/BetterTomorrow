@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../theme/tokens';
 import BottomNav from './BottomNav';
 
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
   content: {
     zIndex: 2,
     elevation: 2,
-    paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + 30 : 58,
+    paddingTop: 58,
     paddingHorizontal: 20,
     paddingBottom: 196,
   },

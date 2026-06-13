@@ -1,5 +1,6 @@
 export const thumbnails = {
   ticketTracker: require('../../assets/ui/ticket_tracker_thumbnail.png'),
+  ticketTrackerCard: require('../../assets/ui/ticket_tracker_card_thumbnail.png'),
   buildQueue: require('../../assets/ui/build_queue_thumbnail.png'),
 };
 

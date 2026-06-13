@@ -7,44 +7,67 @@ export function PillButton({ label, icon, primary = false, style, onPress }) {
   const tint = primary ? '#061014' : colors.muted;
   return (
     <Pressable onPress={onPress} style={[styles.button, primary ? styles.primary : styles.secondary, style]}>
-      {icon ? <AssetIcon name={icon} size={34} color={tint} style={styles.buttonIcon} /> : null}
-      <Text style={[styles.text, primary ? styles.primaryText : styles.secondaryText]} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.72}>{label}</Text>
+      {icon ? <AssetIcon name={icon} size={24} color={tint} style={styles.buttonIcon} /> : null}
+      <Text
+        style={[styles.text, primary ? styles.primaryText : styles.secondaryText]}
+        numberOfLines={1}
+        allowFontScaling={false}
+        maxFontSizeMultiplier={1}
+      >
+        {label}
+      </Text>
     </Pressable>
   );
 }
 
 export function MetaPill({ label, style }) {
-  return <Text style={[styles.meta, style]} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}>{label}</Text>;
+  return (
+    <Text
+      style={[styles.meta, style]}
+      numberOfLines={1}
+      allowFontScaling={false}
+      maxFontSizeMultiplier={1}
+    >
+      {label}
+    </Text>
+  );
 }
 
 const styles = StyleSheet.create({
   button: {
-    minHeight: 84,
-    borderRadius: 24,
+    minHeight: 62,
+    borderRadius: 22,
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 18,
-    paddingVertical: 14,
+    paddingHorizontal: 13,
+    paddingVertical: 9,
     flexDirection: 'row',
-    gap: 12,
+    gap: 8,
   },
   secondary: { backgroundColor: 'rgba(16, 30, 48, .88)', borderColor: colors.line },
   primary: { backgroundColor: colors.teal, borderColor: colors.teal },
-  buttonIcon: { marginTop: 1 },
-  text: { fontSize: 17, lineHeight: 22, fontWeight: '900', flexShrink: 1, includeFontPadding: false, textAlign: 'center' },
+  buttonIcon: { marginTop: 0 },
+  text: {
+    fontSize: 15.5,
+    lineHeight: 19,
+    fontWeight: '900',
+    includeFontPadding: false,
+    textAlign: 'center',
+    flexShrink: 0,
+  },
   secondaryText: { color: colors.muted },
   primaryText: { color: '#061014' },
   meta: {
-    minHeight: 46,
-    borderRadius: 17,
+    minHeight: 42,
+    borderRadius: 16,
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: colors.line,
     backgroundColor: 'rgba(10, 20, 34, .86)',
     color: colors.muted,
-    paddingVertical: 11,
-    paddingHorizontal: 15,
+    paddingVertical: 10,
+    paddingHorizontal: 13,
     fontSize: 15,
     lineHeight: 18,
     fontWeight: '800',

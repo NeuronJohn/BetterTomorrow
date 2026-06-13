@@ -99,11 +99,10 @@
 - Kept the corrected `Import pack` button sizing from v1.13.
 
 
-# v1.15 phone-fit test
+# v1.17 S24/Pixel targeted fix
 
-- Disabled system font scaling globally for Text/TextInput to prevent Android display/font settings from breaking the UI proportions.
-- Added Android status-bar-aware top padding in AppShell.
-- Changed thumbnail images to contain inside their frames instead of cropping/zooming.
-- Rebuilt Memory screen saved card with normal flex layout instead of absolute overlays.
-- Rebuilt preference cards as horizontal cards so text no longer gets crushed into narrow columns on real phones.
-- Rebuilt note card with normal flex layout so it does not collide with the bottom nav.
+- Based on v1.14.
+- Did not modify MemoryScreen.js or PlanScreen.js.
+- Moved Brief `Import pack` to a Brief-only absolute header overlay so it is not below the description.
+- Added a compact card-only thumbnail for Brief/Updates cards; Memory keeps the original saved-item thumbnail behavior.
+- Tuned Save / Hide / Open item / View progress / See details button sizing so labels do not collapse into tiny text on Android.
